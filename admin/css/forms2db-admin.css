@@ -3,6 +3,13 @@
  * included in this file.
  */
 
+.forms2db-field-container {
+    border: solid #b3b3b3 1px;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 3px 0;
+}
+
 .forms2db-fields-row {
     display: inline-flex;
     flex-wrap: wrap;

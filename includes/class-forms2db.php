@@ -166,9 +166,6 @@ class Forms2db {
 		$plugin_admin = new Forms2db_Admin( $this->get_plugin_name(), $this->get_version() );
 		$plugin_cpt = new Forms2db_Cpt();
 
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-
 	}
 
 	/**
