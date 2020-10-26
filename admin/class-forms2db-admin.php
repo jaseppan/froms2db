@@ -47,10 +47,12 @@ class Forms2db_Admin {
 	 * @param      string    $plugin_name       The name of this plugin.
 	 * @param      string    $version    The version of this plugin.
 	 */
-	public function __construct() {
+	public function __construct($plugin_name, $version) {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_styles' ));
+		add_action( 'admin_enqueue_scripts', array($this, 'enqueue_scripts' ));
 
 	}
 
@@ -73,9 +75,16 @@ class Forms2db_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/forms2db-admin.css', array(), $this->version, 'all' );
+		
+		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/forms2db-admin.css' );
 
+		
 	}
+
+	public function editor_style() {
+		//add_editor_style( plugin_dir_url( __FILE__ ) . 'css/forms2db-admin.css' );
+	}
+
 
 	/**
 	 * Register the JavaScript for the admin area.

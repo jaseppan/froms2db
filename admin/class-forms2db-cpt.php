@@ -111,7 +111,23 @@ class Forms2db_Cpt {
 
     function field_row() { ?>
         <div class="forms2db-fields-row">
-            <?php echo $this->select_type() ?>
+            <div class="forms2db-fields-col col-4">
+                <select name="type" id="type">
+                    <optgroup label="Input">
+                        <option value="text">text</option>
+                        <option value="number">number</option>
+                        <option value="email">email</option>
+                        <option value="hidden">hidden</option>
+                    <optgroup label="Choices">
+                        <option value="select"></option>
+                        <option value="checkbox"></option>
+                        <option value="radio"></option>
+                    <optgroup label="Other">   
+                        <option value="textarea">textarea</option>
+                        <option value="file">file</option>
+                </select>
+            </div>
+
         </div>
     <?php }
 
