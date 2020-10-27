@@ -25,8 +25,9 @@
     padding: 3px 4px;
 }
 
-.forms2db-fields-col .inner-col input, .forms2db-fields-col textarea {
+.forms2db-fields-col .inner-col input, .forms2db-fields-col select, .forms2db-fields-col textarea {
     width: 100%;
+    border-color: #cacaca;
 }
 
 .col-2 {
@@ -52,6 +53,30 @@
 label {
     font-weight: 700;
 }
+
+.forms2db-field-header {
+    position: relative;
+    background: #eee;
+    margin: -5px;
+    padding: 10px;
+    overflow: hidden;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom: #b7b7b7 solid 1px;
+    margin-bottom: 4px;
+}
+
+.forms2db-field-actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
 
 .block {
     display: block;

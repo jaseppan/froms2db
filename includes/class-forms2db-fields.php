@@ -117,22 +117,29 @@ class Forms2db_Fields {
         }
         
         return $field;
+
     }
 
     function add_select_option($option, $value) {
+
         $selected = ($option['value'] == $value) ? 'selected' : ''; 
+
         return sprintf('<option value="%s" %s>%s</option>', 
             $option['value'], 
             $selected, 
             $option['text']
         );
+
     }
 
     function add_checkbox( $name, $option, $value, $type, $id, $id_number, $class ) {
+
         $checked = ($option['value'] == $value) ? 'checked' : '';
         $item_id = $id . '-' . $id_number;
+
         if($type == 'checkbox')
             $name .= '[]';
+        
         return sprintf('<input type="%s" name="%s" id="%s" class="%s" value="%s" %s><label for="%s" class="froms2db-checkbox-label">%s</label>', 
             $type, 
             $name, 

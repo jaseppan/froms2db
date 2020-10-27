@@ -106,30 +106,148 @@ class Forms2db_Cpt {
     }
 
     function form_fields_meta_box() {
+
+        $fields = array(
+            array(
+                'type'                  => 'select',
+                'name'                  => 'eka',
+                'label'                 => 'Eka',
+                'value'                 => 'textarea',
+                'options'               => array(
+                    array(
+                        'value' => 'input',
+                        'text'  => __('Input'),
+                    ),
+                    array(
+                        'value' => 'checkbox',
+                        'text'  => __('Checkbox'),
+                    ),
+                    array(
+                        'value' => 'radio',
+                        'text'  => __('Radio'),
+                    ),
+                    array(
+                        'value' => 'select',
+                        'text'  => __('Select'),
+                    ),
+                    array(
+                        'value' => 'textarea',
+                        'text'  => __('Textarea'),
+                    ),
+                    array(
+                        'value' => 'file',
+                        'text'  => __('File'),
+                    ),
+                ),
+            ),
+            array(
+                'type'                  => 'text',
+                'name'                  => 'field-type',
+                'label'                 => 'Nimi',
+                'value'                 => 'Janne',  
+            ),
+        );
+
         require('partials/form-fields-metabox.php');
     }
 
-    function field_row() { ?>
-        <div class="forms2db-fields-row">
-            <div class="forms2db-fields-col col-4">
-                <select name="type" id="type">
-                    <optgroup label="Input">
-                        <option value="text">text</option>
-                        <option value="number">number</option>
-                        <option value="email">email</option>
-                        <option value="hidden">hidden</option>
-                    <optgroup label="Choices">
-                        <option value="select"></option>
-                        <option value="checkbox"></option>
-                        <option value="radio"></option>
-                    <optgroup label="Other">   
-                        <option value="textarea">textarea</option>
-                        <option value="file">file</option>
-                </select>
-            </div>
+    function field_row($fields) { 
 
-        </div>
-    <?php }
+        if( !isset($fields) )
+            $fields = [0 => ''];
+        
+        foreach( $fields as $field ) { 
+            ?>
+            <div class="forms2db-field-container sortable">
+                <div class="forms2db-field-header">
+                    <input type="text" name="label" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
+                    <div class="forms2db-field-actions">
+                        <span class="forms2db-field-toggle">></span>
+                    </div>
+                </div>
+                <div class="forms2db-fields-row">
+                    <div class="forms2db-fields-col col-2">
+                        <div class="inner-col">
+                            <label for="type" class="block"><?php _e('Type') ?></label>
+                            <select name="type[]" id="type">
+                                <option></option>
+                                <optgroup label="Input">
+                                    <option value="text" <?php echo ($field['type'] == 'text') ? 'selected' : '' ?>>text</option>
+                                    <option value="number" <?php echo ($field['type'] == 'number') ? 'selected' : '' ?>>number</option>
+                                    <option value="email" <?php echo ($field['type'] == 'email') ? 'selected' : '' ?>>email</option>
+                                    <option value="hidden" <?php echo ($field['type'] == 'hidden') ? 'selected' : '' ?>>hidden</option>
+                                <optgroup label="Choices">
+                                    <option value="select" <?php echo ($field['type'] == 'select') ? 'selected' : '' ?>>select</option>
+                                    <option value="checkbox" <?php echo ($field['type'] == 'checkbox') ? 'selected' : '' ?>>checkbox</option>
+                                    <option value="radio" <?php echo ($field['type'] == 'radio') ? 'selected' : '' ?>>radio</option>
+                                <optgroup label="Other">   
+                                    <option value="textarea" <?php echo ($field['type'] == 'textarea') ? 'selected' : '' ?>>textarea</option>
+                                    <option value="file" <?php echo ($field['type'] == 'file') ? 'selected' : '' ?>>file</option>
+                            </select>
+                        </div>
+                        
+                    </div>
+                    <div class="forms2db-fields-col col-10">
+                        <div class="forms2db-fields-row">
+                            <div class="forms2db-fields-col col-4">
+                                <div class="inner-col">
+                                    <label for="name" class="block"><?php _e('Name') ?></label>
+                                    <input type="text" name="name[]" value="<?php echo (isset($field['name'])) ? $field['name'] : '' ?>">
+                                </div>
+                            </div>
+                            <div class="forms2db-fields-col col-4">
+                                <div class="inner-col">
+                                    <label for="type" class="block"><?php _e('Value') ?></label>
+                                    <input type="text" name="value[]" value="<?php echo (isset($field['value'])) ? $field['value'] : '' ?>">
+                                </div>
+                            </div>
+                            <div class="forms2db-fields-col col-4">
+                                <div class="inner-col">
+                                    <label for="type" class="block"><?php _e('Class') ?></label>
+                                    <input type="text" name="class[]" value="<?php echo (isset($field['class'])) ? $field['class'] : '' ?>">
+                                </div>
+                            </div>
+                            <div class="forms2db-fields-col col-4">
+                                <div class="inner-col">
+                                    <label for="type" class="block"><?php _e('Attributes') ?></label>
+                                    <input type="text" name="attributes[]" value="<?php echo (isset($field['attributes'])) ? $field['attributes'] : '' ?>">
+                                </div>
+                            </div>
+                            <div class="forms2db-fields-col col-4">
+                                <div class="inner-col">
+                                </div>
+                            </div>
+                            <div class="forms2db-fields-col col-4">
+                                <div class="inner-col">
+                                </div>
+                            </div>
+                            <div class="forms2db-fields-col col-12">
+                                <div class="inner-col">
+                                    <div id="options">
+                                        <label for="type" class="block"><?php _e('Options') ?></label>
+                                        <textarea name="options[]" id="" cols="30" rows="4"><?php echo (isset($field['options'])) ? $this->option_array_to_text($field['options']) : '' ?></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <?php }
+    }
+
+    function option_array_to_text($options) {
+        
+        $option_text = '';
+        foreach( $options as $option ) {
+            $option_text .= implode( ' : ', $option ) . "\r";
+        }
+
+        return $option_text;
+
+
+
+    }
 
 
     function select_type($value = '') {
