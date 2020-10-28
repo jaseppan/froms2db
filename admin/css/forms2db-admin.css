@@ -3,11 +3,21 @@
  * included in this file.
  */
 
-.forms2db-field-container {
+ .forms2db-field-container {
     border: solid #b3b3b3 1px;
     border-radius: 5px;
     padding: 5px;
     margin: 3px 0;
+    height: 41px;
+    overflow: hidden;
+}
+
+.forms2db-field-container.active {
+    height: 100%;
+}
+
+.active .forms2db-field-toggle {
+    transform: rotate(90deg);
 }
 
 .forms2db-fields-row {
@@ -72,11 +82,30 @@ label {
     top: 0;
     height: 100%;
     display: flex;
-    flex-direction: column;
     justify-content: center;
 
 }
 
+.forms2db-field-actions span {
+    font-size: 1.4rem;
+    margin: 0 0.5rem 0 0;
+    color: gray;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+span.circle {
+    border: #707070 2px solid;
+    font-size: 0.7em;
+    border-radius: 1em;
+    height: 0.9em;
+    width: 1em;
+    text-align: center;
+    font-weight: 700;
+    padding-bottom: 0.1em;
+    cursor: pointer;
+}
 
 .block {
     display: block;

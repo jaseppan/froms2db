@@ -153,15 +153,18 @@ class Forms2db_Cpt {
 
     function field_row($fields) { 
 
-        if( !isset($fields) )
+        if( !isset($fields) ) {
             $fields = [0 => ''];
+            $active = 'active';
+        }
         
         foreach( $fields as $field ) { 
             ?>
-            <div class="forms2db-field-container sortable">
+            <div class="forms2db-field-container sortable <?php echo (isset($active)) ? $active : ''; ?>">
                 <div class="forms2db-field-header">
                     <input type="text" name="label" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
                     <div class="forms2db-field-actions">
+                        <span class="forms2db-field-delete"><span class="circle">x</span></span>
                         <span class="forms2db-field-toggle">></span>
                     </div>
                 </div>
