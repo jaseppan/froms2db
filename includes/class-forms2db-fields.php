@@ -42,7 +42,7 @@ class Forms2db_Fields {
         $inputs = ['text', 'number', 'email', 'hidden'];
         
         // Checkboxes and radio buttons requires options and they are handled like select field
-        $checkboxes = ['checkbox', 'radio'];    
+        $checkboxes = ['checkbox', 'radio', 'select'];    
         
         // Add label
         $field = isset( $args['label'] ) ? sprintf( '<label for="%s" class="froms2db-main-label">%s</label>', $args['id'], $args['label'] ) : '';

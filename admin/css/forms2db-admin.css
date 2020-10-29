@@ -16,7 +16,7 @@
     height: 100%;
 }
 
-.active .forms2db-field-toggle {
+.forms2db-field-toggle span.active {
     transform: rotate(90deg);
 }
 

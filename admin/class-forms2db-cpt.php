@@ -157,6 +157,12 @@ class Forms2db_Cpt {
             $fields = [0 => ''];
             $active = 'active';
         }
+
+        // Types for input fields
+        $inputs = ['text', 'number', 'email', 'hidden'];
+        
+        // Checkboxes and radio buttons requires options and they are handled like select field
+        $checkboxes = ['checkbox', 'radio', 'select'];  
         
         foreach( $fields as $field ) { 
             ?>
@@ -165,14 +171,14 @@ class Forms2db_Cpt {
                     <input type="text" name="label" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
                     <div class="forms2db-field-actions">
                         <span class="forms2db-field-delete"><span class="circle">x</span></span>
-                        <span class="forms2db-field-toggle">></span>
+                        <span class="forms2db-field-toggle"><span>></span></span>
                     </div>
                 </div>
                 <div class="forms2db-fields-row">
                     <div class="forms2db-fields-col col-2">
                         <div class="inner-col">
                             <label for="type" class="block"><?php _e('Type') ?></label>
-                            <select name="type[]" id="type">
+                            <select name="type[]" class="type">
                                 <option></option>
                                 <optgroup label="Input">
                                     <option value="text" <?php echo ($field['type'] == 'text') ? 'selected' : '' ?>>text</option>
@@ -226,7 +232,7 @@ class Forms2db_Cpt {
                             </div>
                             <div class="forms2db-fields-col col-12">
                                 <div class="inner-col">
-                                    <div id="options">
+                                    <div class="options <?php echo (!in_array( $field['type'], $checkboxes)) ? 'hidden' : '' ?>">
                                         <label for="type" class="block"><?php _e('Options') ?></label>
                                         <textarea name="options[]" id="" cols="30" rows="4"><?php echo (isset($field['options'])) ? $this->option_array_to_text($field['options']) : '' ?></textarea>
                                     </div>
