@@ -164,9 +164,9 @@ class Forms2db_Cpt {
         // Checkboxes and radio buttons requires options and they are handled like select field
         $checkboxes = ['checkbox', 'radio', 'select'];  
         
-        foreach( $fields as $field ) { 
+        foreach( $fields as $key => $field ) { 
             ?>
-            <div class="forms2db-field-container <?php echo (isset($active)) ? $active : ''; ?>">
+            <div id="forms2db-field-container-<?php echo $key ?>" class="forms2db-field-container <?php echo (isset($active)) ? $active : ''; ?>">
                 <div class="forms2db-field-header">
                     <input type="text" name="label" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
                     <div class="forms2db-field-actions">

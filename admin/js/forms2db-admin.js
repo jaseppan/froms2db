@@ -17,12 +17,15 @@ jQuery( document ).ready(function($) {
 	});
 
 	$(document).on('change', '.type', function() {
+
 		var checkboxes = ['checkbox', 'radio', 'select']; 
 
+		
+
 		if( inArray($(this).val(), checkboxes) ) {
-			$('.options').removeClass('hidden');
+			$( this ).closest('.forms2db-field-container').find('.options').removeClass('hidden');
 		} else {
-			$('.options').addClass('hidden');
+			$( this ).closest('.forms2db-field-container').find('.options').addClass('hidden');
 		}
 	});
 
