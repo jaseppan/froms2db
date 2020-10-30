@@ -166,7 +166,7 @@ class Forms2db_Cpt {
         
         foreach( $fields as $field ) { 
             ?>
-            <div class="forms2db-field-container sortable <?php echo (isset($active)) ? $active : ''; ?>">
+            <div class="forms2db-field-container <?php echo (isset($active)) ? $active : ''; ?>">
                 <div class="forms2db-field-header">
                     <input type="text" name="label" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
                     <div class="forms2db-field-actions">

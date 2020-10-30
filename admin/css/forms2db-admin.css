@@ -5,11 +5,13 @@
 
  .forms2db-field-container {
     border: solid #b3b3b3 1px;
+    background-color: #ffffff;
     border-radius: 5px;
     padding: 5px;
     margin: 3px 0;
     height: 41px;
     overflow: hidden;
+    cursor: grabbing;
 }
 
 .forms2db-field-container.active {
@@ -93,6 +95,7 @@ label {
     display: flex;
     justify-content: center;
     flex-direction: column;
+    cursor: pointer;
 }
 
 span.circle {
@@ -104,7 +107,6 @@ span.circle {
     text-align: center;
     font-weight: 700;
     padding-bottom: 0.1em;
-    cursor: pointer;
 }
 
 .block {

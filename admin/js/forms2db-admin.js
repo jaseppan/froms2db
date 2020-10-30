@@ -26,6 +26,10 @@ jQuery( document ).ready(function($) {
 		}
 	});
 
+	$(function() {
+		$( "#forms2db-fields" ).sortable();
+		$( "#forms2db-fields" ).disableSelection();
+	});
 });
 
 function inArray(needle, haystack) {
