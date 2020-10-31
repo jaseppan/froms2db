@@ -37,7 +37,7 @@
     padding: 3px 4px;
 }
 
-.forms2db-fields-col .inner-col input, .forms2db-fields-col select, .forms2db-fields-col textarea {
+.forms2db-fields-col .inner-col input[type=text], .forms2db-fields-col select, .forms2db-fields-col textarea {
     width: 100%;
     border-color: #cacaca;
 }

@@ -166,7 +166,7 @@ class Forms2db_Cpt {
         
         foreach( $fields as $key => $field ) { 
             ?>
-            <div id="forms2db-field-container-<?php echo $key ?>" class="forms2db-field-container <?php echo (isset($active)) ? $active : ''; ?>">
+            <div class="forms2db-field-container <?php echo (isset($active)) ? $active : ''; ?>">
                 <div class="forms2db-field-header">
                     <input type="text" name="label" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
                     <div class="forms2db-field-actions">
@@ -224,10 +224,14 @@ class Forms2db_Cpt {
                             </div>
                             <div class="forms2db-fields-col col-4">
                                 <div class="inner-col">
+                                    <label for="type" class="block"><?php _e('Max length') ?></label>
+                                    <input type="text" name="max_length[]" value="<?php echo (isset($field['max_length'])) ? $field['max_length'] : '' ?>">
                                 </div>
                             </div>
                             <div class="forms2db-fields-col col-4">
                                 <div class="inner-col">
+                                    <label for="type" class="block"><?php _e('Required') ?></label>
+                                    <input type="checkbox" name="required[]" value="<?php echo (isset($field['required'])) ? $field['required'] : '' ?>">
                                 </div>
                             </div>
                             <div class="forms2db-fields-col col-12">

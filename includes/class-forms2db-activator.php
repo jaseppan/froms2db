@@ -31,6 +31,23 @@ class Forms2db_Activator {
 	 */
 	public static function activate() {
 
+		global $wpdb;
+		global $jal_db_version;
+		$charset_collate = $wpdb->get_charset_collate();
+	
+		$sql .= "CREATE TABLE " . $wpdb->prefix . "forms2fb_data (
+					id INT NOT NULL AUTO_INCREMENT,
+					post_id INT NOT NULL,
+					form_id INT NOT NULL,
+					user_id INT NOT NULL,
+					form_data VARCHAR (10000),
+					PRIMARY KEY (id) );";
+		
+		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+		dbDelta( $sql );
+	
+		add_option( 'jal_db_version', $jal_db_version );
+
 	}
 
 }
