@@ -32,6 +32,7 @@ class Forms2db_Cpt {
 	 */
 	public function __construct() {
         add_action( 'init', array($this, 'add_post_type') );
+        add_action( 'save_post_forms2db-forms', array($this, 'save_fields') );
         add_action( 'add_meta_boxes', array($this, 'metaboxes') );
     }
 
@@ -148,7 +149,7 @@ class Forms2db_Cpt {
             ),
         );
 
-        require('partials/form-fields-metabox.php');
+        require('views/form-fields-metabox.php');
     }
 
     function field_row($fields) { 
@@ -165,88 +166,8 @@ class Forms2db_Cpt {
         $checkboxes = ['checkbox', 'radio', 'select'];  
         
         foreach( $fields as $key => $field ) { 
-            ?>
-            <div class="forms2db-field-container <?php echo (isset($active)) ? $active : ''; ?>">
-                <div class="forms2db-field-header">
-                    <input type="text" name="label" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
-                    <div class="forms2db-field-actions">
-                        <span class="forms2db-field-delete"><span class="circle">x</span></span>
-                        <span class="forms2db-field-toggle"><span>></span></span>
-                    </div>
-                </div>
-                <div class="forms2db-fields-row">
-                    <div class="forms2db-fields-col col-2">
-                        <div class="inner-col">
-                            <label for="type" class="block"><?php _e('Type') ?></label>
-                            <select name="type[]" class="type">
-                                <option></option>
-                                <optgroup label="Input">
-                                    <option value="text" <?php echo ($field['type'] == 'text') ? 'selected' : '' ?>>text</option>
-                                    <option value="number" <?php echo ($field['type'] == 'number') ? 'selected' : '' ?>>number</option>
-                                    <option value="email" <?php echo ($field['type'] == 'email') ? 'selected' : '' ?>>email</option>
-                                    <option value="hidden" <?php echo ($field['type'] == 'hidden') ? 'selected' : '' ?>>hidden</option>
-                                <optgroup label="Choices">
-                                    <option value="select" <?php echo ($field['type'] == 'select') ? 'selected' : '' ?>>select</option>
-                                    <option value="checkbox" <?php echo ($field['type'] == 'checkbox') ? 'selected' : '' ?>>checkbox</option>
-                                    <option value="radio" <?php echo ($field['type'] == 'radio') ? 'selected' : '' ?>>radio</option>
-                                <optgroup label="Other">   
-                                    <option value="textarea" <?php echo ($field['type'] == 'textarea') ? 'selected' : '' ?>>textarea</option>
-                                    <option value="file" <?php echo ($field['type'] == 'file') ? 'selected' : '' ?>>file</option>
-                            </select>
-                        </div>
-                        
-                    </div>
-                    <div class="forms2db-fields-col col-10">
-                        <div class="forms2db-fields-row">
-                            <div class="forms2db-fields-col col-4">
-                                <div class="inner-col">
-                                    <label for="name" class="block"><?php _e('Name') ?></label>
-                                    <input type="text" name="name[]" value="<?php echo (isset($field['name'])) ? $field['name'] : '' ?>">
-                                </div>
-                            </div>
-                            <div class="forms2db-fields-col col-4">
-                                <div class="inner-col">
-                                    <label for="type" class="block"><?php _e('Value') ?></label>
-                                    <input type="text" name="value[]" value="<?php echo (isset($field['value'])) ? $field['value'] : '' ?>">
-                                </div>
-                            </div>
-                            <div class="forms2db-fields-col col-4">
-                                <div class="inner-col">
-                                    <label for="type" class="block"><?php _e('Class') ?></label>
-                                    <input type="text" name="class[]" value="<?php echo (isset($field['class'])) ? $field['class'] : '' ?>">
-                                </div>
-                            </div>
-                            <div class="forms2db-fields-col col-4">
-                                <div class="inner-col">
-                                    <label for="type" class="block"><?php _e('Attributes') ?></label>
-                                    <input type="text" name="attributes[]" value="<?php echo (isset($field['attributes'])) ? $field['attributes'] : '' ?>">
-                                </div>
-                            </div>
-                            <div class="forms2db-fields-col col-4">
-                                <div class="inner-col">
-                                    <label for="type" class="block"><?php _e('Max length') ?></label>
-                                    <input type="text" name="max_length[]" value="<?php echo (isset($field['max_length'])) ? $field['max_length'] : '' ?>">
-                                </div>
-                            </div>
-                            <div class="forms2db-fields-col col-4">
-                                <div class="inner-col">
-                                    <label for="type" class="block"><?php _e('Required') ?></label>
-                                    <input type="checkbox" name="required[]" value="<?php echo (isset($field['required'])) ? $field['required'] : '' ?>">
-                                </div>
-                            </div>
-                            <div class="forms2db-fields-col col-12">
-                                <div class="inner-col">
-                                    <div class="options <?php echo (!in_array( $field['type'], $checkboxes)) ? 'hidden' : '' ?>">
-                                        <label for="type" class="block"><?php _e('Options') ?></label>
-                                        <textarea name="options[]" id="" cols="30" rows="4"><?php echo (isset($field['options'])) ? $this->option_array_to_text($field['options']) : '' ?></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        <?php }
+            require('views/partials/form-fields.php');            
+        }
     }
 
     function option_array_to_text($options) {
@@ -257,8 +178,6 @@ class Forms2db_Cpt {
         }
 
         return $option_text;
-
-
 
     }
 
@@ -303,12 +222,89 @@ class Forms2db_Cpt {
 
     }
 
-
+    public function save_fields($post_id) {
         
 
+        $allowed_types = [
+            'text',
+            'number',
+            'email',
+            'hidden',
+            'select',
+            'checkbox',
+            'radio',
+            'textarea',
+            'file'
 
+        ];
+
+        $checkboxes = ['checkbox', 'radio', 'select'];  // These types require options
+        
+        $errors =  [];
+
+        foreach ($_POST['name'] as $key => $name ) {
+
+            if( isset($name) && isset($_POST['type'][$key] ) && in_array($_POST['type'][$key], $allowed_types) ) {
+
+                if( in_array($_POST['type'][$key],  $checkboxes) ) {
+                    if(!isset($_POST['options'][$key]) ) {
+                        $errors[$key]['text'] = __('Options are required');
+                        $errors[$key]['value'] = 'missing-options';
+                    } else {
+                        // Check is options formated correctly
+                        $options = $_POST['options'][$key];
+                    }
+                }
+                $name = sanitize_text_field( $name );
+                $type = $_POST['type'][$key]; // Only values listed in $allowed_types are possible
+                $label = isset($_POST['label'][$key] ) ? sanitize_text_field( $_POST['label'][$key] ) : '';
+                $value = isset($_POST['value'][$key] ) ? sanitize_text_field( $_POST['value'][$key] ) : '';
+                $attributes = isset($_POST['attributes'][$key]) ? sanitize_text_field( $_POST['attributes'][$key] ) : '';
+    
+                $fields[$key] = array(
+                    'type'                  => $type,
+                    'name'                  => $name,
+                    'label'                 => $label,
+                    'value'                 => $value,
+                    'attributes'            => $attributes, 
+                );
+
+                if( in_array($type, $checkboxes) ) {
+                    $fields[$key]['options'] = $options;
+                }
+
+            } else {
+                if( !isset($name) ) {
+                    $errors[$key]['text'] = __('Name is required');
+                    $errors[$key]['value'] = 'missing-name';
+                }
+                if( !isset($_POST['type'][$key]) ) {
+                    $errors[$key]['text'] = __('Type is required');
+                    $errors[$key]['value'] = 'missing-type';
+                } elseif( in_array($_POST['type'][$key], $allowed_types) ) {
+                    $errors[$key]['text'] = __('Invalid type');
+                    $errors[$key]['value'] = 'invalid-type';
+                }           
+
+            }
+
+        }
+
+        
+        if( empty($errors) ) {
+            echo '<pre>';
+            var_dump($fields);
+            echo '</pre>';
+            exit();
+        } else {
+
+        }
+
+
+
+
+    }
 
 }
-
 
 ?>
