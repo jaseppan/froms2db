@@ -9,24 +9,23 @@
     <div class="forms2db-fields-row">
         <div class="forms2db-fields-col col-2">
             <div class="inner-col">
-                <label for="type" class="block"><?php _e('Type') ?></label>
-                <select name="type[]" class="type">
+                <label for="type" class="block"><?php _e('field-type') ?></label>
+                <select name="field-type[]" class="type">
                     <option></option>
                     <optgroup label="Input">
-                        <option value="text" <?php echo ($field['type'] == 'text') ? 'selected' : '' ?>>text</option>
-                        <option value="number" <?php echo ($field['type'] == 'number') ? 'selected' : '' ?>>number</option>
-                        <option value="email" <?php echo ($field['type'] == 'email') ? 'selected' : '' ?>>email</option>
-                        <option value="hidden" <?php echo ($field['type'] == 'hidden') ? 'selected' : '' ?>>hidden</option>
+                        <option value="text" <?php echo ($field['field-type'] == 'text') ? 'selected' : '' ?>>text</option>
+                        <option value="number" <?php echo ($field['field-type'] == 'number') ? 'selected' : '' ?>>number</option>
+                        <option value="email" <?php echo ($field['field-type'] == 'email') ? 'selected' : '' ?>>email</option>
+                        <option value="hidden" <?php echo ($field['field-type'] == 'hidden') ? 'selected' : '' ?>>hidden</option>
                     <optgroup label="Choices">
-                        <option value="select" <?php echo ($field['type'] == 'select') ? 'selected' : '' ?>>select</option>
-                        <option value="checkbox" <?php echo ($field['type'] == 'checkbox') ? 'selected' : '' ?>>checkbox</option>
-                        <option value="radio" <?php echo ($field['type'] == 'radio') ? 'selected' : '' ?>>radio</option>
+                        <option value="select" <?php echo ($field['field-type'] == 'select') ? 'selected' : '' ?>>select</option>
+                        <option value="checkbox" <?php echo ($field['field-type'] == 'checkbox') ? 'selected' : '' ?>>checkbox</option>
+                        <option value="radio" <?php echo ($field['field-type'] == 'radio') ? 'selected' : '' ?>>radio</option>
                     <optgroup label="Other">   
-                        <option value="textarea" <?php echo ($field['type'] == 'textarea') ? 'selected' : '' ?>>textarea</option>
-                        <option value="file" <?php echo ($field['type'] == 'file') ? 'selected' : '' ?>>file</option>
+                        <option value="textarea" <?php echo ($field['field-type'] == 'textarea') ? 'selected' : '' ?>>textarea</option>
+                        <option value="file" <?php echo ($field['field-type'] == 'file') ? 'selected' : '' ?>>file</option>
                 </select>
             </div>
-            
         </div>
         <div class="forms2db-fields-col col-10">
             <div class="forms2db-fields-row">
@@ -68,7 +67,7 @@
                 </div>
                 <div class="forms2db-fields-col col-12">
                     <div class="inner-col">
-                        <div class="options <?php echo (!in_array( $field['type'], $checkboxes)) ? 'hidden' : '' ?>">
+                        <div class="options <?php echo (!in_array( $field['field-type'], $checkboxes)) ? 'hidden' : '' ?>">
                             <label for="type" class="block"><?php _e('Options') ?></label>
                             <textarea name="options[]" id="" cols="30" rows="4"><?php echo (isset($field['options'])) ? $this->option_array_to_text($field['options']) : '' ?></textarea>
                         </div>

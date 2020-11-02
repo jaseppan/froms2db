@@ -27,7 +27,7 @@ class Forms2db_Fields {
 
         // Set defauts
         $defaults = array(
-            'type'                  => 'input',
+            'field-type'            => 'input',
             'value'                 => '',
             'id'                    => '',
             'class'                 => '',
@@ -46,7 +46,7 @@ class Forms2db_Fields {
         
         // Add label
         $field = isset( $args['label'] ) ? sprintf( '<label for="%s" class="froms2db-main-label">%s</label>', $args['id'], $args['label'] ) : '';
-        switch ($args['type']) {
+        switch ($args['field-type']) {
             case "select" :
                 if(!isset($args['options']))
                     return __("Options required for this kind of field");
@@ -63,23 +63,23 @@ class Forms2db_Fields {
                 );
                 $field .= '</select>';
                 break;
-            case in_array( $args['type'], $inputs ) :
+            case in_array( $args['field-type'], $inputs ) :
                 $field .= sprintf('<input type="%s" name="%s" id="%s" class="%s" value="%s">', 
-                    $args['type'], 
+                    $args['field-type'], 
                     $args['name'], 
                     $args['id'], 
                     $args['class'], 
                     $args['value']
                 );
                 break;    
-            case in_array( $args['type'], $checkboxes ) :
+            case in_array( $args['field-type'], $checkboxes ) :
                 if(!isset($args['options']))
                     return __("Options required for this kind of field");
                 $options = $args['options'];
                 $options_count = count($args['options']);
                 $value = array_fill(0, $options_count, $args['value']);
                 $name = array_fill(0, $options_count, $args['name']);
-                $type = array_fill(0, $options_count, $args['type']);
+                $type = array_fill(0, $options_count, $args['field-type']);
                 $id = array_fill( 0, $options_count, $args['id'] );
                 $id_numbers = array_fill(0, $options_count, $args['id']);
                 $class = array( 0, $options_count, $args['class']);
@@ -106,7 +106,7 @@ class Forms2db_Fields {
                 $size = isset($args['size']) ? $args['size'] : '20';
                 $accept = isset($args['accept']) ? $args['accept'] : 'image/*';
                 $field .= sprintf('<input type="%s" name="%s" id="%s" class="%s" size="%s" accept="%s">', 
-                    $args['type'], 
+                    $args['field-type'], 
                     $args['name'], 
                     $args['id'], 
                     $args['class'], 

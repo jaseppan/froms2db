@@ -110,7 +110,7 @@ class Forms2db_Cpt {
 
         $fields = array(
             array(
-                'type'                  => 'select',
+                'field-type'                  => 'select',
                 'name'                  => 'eka',
                 'label'                 => 'Eka',
                 'value'                 => 'textarea',
@@ -142,14 +142,18 @@ class Forms2db_Cpt {
                 ),
             ),
             array(
-                'type'                  => 'text',
+                'field-type'                  => 'text',
                 'name'                  => 'field-type',
                 'label'                 => 'Nimi',
                 'value'                 => 'Janne',  
             ),
         );
 
+        ob_start();        
         require('views/form-fields-metabox.php');
+        $fields = ob_get_contents();
+        ob_clean();
+        echo $fields;
     }
 
     function field_row($fields) { 
@@ -185,7 +189,7 @@ class Forms2db_Cpt {
     function select_type($value = '') {
 
         $args = array(
-            'type'                  => 'file',
+            'field-type'                  => 'file',
             'value'                 => 'textarea',
             'label'                 => __('Field type'),
             'name'                  => 'field-type',
@@ -224,6 +228,8 @@ class Forms2db_Cpt {
 
     public function save_fields($post_id) {
         
+        //if(!isset( $_POST['name'] ) || $_POST['name'] )
+            //return;
 
         $allowed_types = [
             'text',
@@ -244,9 +250,9 @@ class Forms2db_Cpt {
 
         foreach ($_POST['name'] as $key => $name ) {
 
-            if( isset($name) && isset($_POST['type'][$key] ) && in_array($_POST['type'][$key], $allowed_types) ) {
+            if( isset($name) && isset($_POST['field-type'][$key] ) && in_array($_POST['field-type'][$key], $allowed_types) ) {
 
-                if( in_array($_POST['type'][$key],  $checkboxes) ) {
+                if( in_array($_POST['field-type'][$key],  $checkboxes) ) {
                     if(!isset($_POST['options'][$key]) ) {
                         $errors[$key]['text'] = __('Options are required');
                         $errors[$key]['value'] = 'missing-options';
@@ -256,13 +262,13 @@ class Forms2db_Cpt {
                     }
                 }
                 $name = sanitize_text_field( $name );
-                $type = $_POST['type'][$key]; // Only values listed in $allowed_types are possible
+                $type = $_POST['field-type'][$key]; // Only values listed in $allowed_types are possible
                 $label = isset($_POST['label'][$key] ) ? sanitize_text_field( $_POST['label'][$key] ) : '';
                 $value = isset($_POST['value'][$key] ) ? sanitize_text_field( $_POST['value'][$key] ) : '';
                 $attributes = isset($_POST['attributes'][$key]) ? sanitize_text_field( $_POST['attributes'][$key] ) : '';
     
                 $fields[$key] = array(
-                    'type'                  => $type,
+                    'field-type'                  => $type,
                     'name'                  => $name,
                     'label'                 => $label,
                     'value'                 => $value,
@@ -278,10 +284,10 @@ class Forms2db_Cpt {
                     $errors[$key]['text'] = __('Name is required');
                     $errors[$key]['value'] = 'missing-name';
                 }
-                if( !isset($_POST['type'][$key]) ) {
+                if( !isset($_POST['field-type'][$key]) ) {
                     $errors[$key]['text'] = __('Type is required');
                     $errors[$key]['value'] = 'missing-type';
-                } elseif( in_array($_POST['type'][$key], $allowed_types) ) {
+                } elseif( in_array($_POST['field-type'][$key], $allowed_types) ) {
                     $errors[$key]['text'] = __('Invalid type');
                     $errors[$key]['value'] = 'invalid-type';
                 }           
@@ -290,14 +296,10 @@ class Forms2db_Cpt {
 
         }
 
-        
         if( empty($errors) ) {
-            echo '<pre>';
-            var_dump($fields);
-            echo '</pre>';
-            exit();
+            update_post_meta( $post_id, '_forms2db_form', $fields );
         } else {
-
+            // Handle errors
         }
 
 
