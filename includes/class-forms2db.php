@@ -138,6 +138,14 @@ class Forms2db {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-forms2db-public.php';
 
+		
+		/**
+		 * The class responsible printing forms
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/forms2db_form.php';
+
+
+
 		$this->loader = new Forms2db_Loader();
 
 	}

@@ -13,10 +13,27 @@ function get_form_data( $args = array() ) {
         $conditions .= ( isset( $args['content'] ) ) ? $args['content'] . " LIKE s%" : '';
         $conditions .= ( isset( $args['order_by'] ) ) ? $args['order_by'] . " ORDER BY s%" : '';
 
-        $sql = "SELECT * FROM " . $wpdb->prefix . "forms2fb_data"  . $conditions;
+        $sql = "SELECT * FROM " . $wpdb->prefix . "forms2db_data"  . $conditions;
         $result = $wpdb->get_results($wpdb->prepare($sql), $args);
 
         return $result;
         
     }
 }
+
+function forms2db_form($args) {
+
+    $form_id = $args['id'];
+    $form = new Forms2dbForm($form_id);
+    ob_start();
+    $form->view();
+    $content = ob_get_contents();
+    ob_clean();
+    return $content;
+
+
+
+
+}
+
+add_shortcode( 'forms2db-form', 'forms2db_form' );
