@@ -1,6 +1,6 @@
 <?php 
 
-function get_form_data( $args = array() ) {
+function forms2db_get_form_data( $args = array() ) {
     if( current_user_can( 'edit_posts' ) ) {
 
         global $wpdb;
@@ -21,6 +21,18 @@ function get_form_data( $args = array() ) {
     }
 }
 
+function forms2db_parse_options($options_str) {
+    
+    $option_rows = explode(PHP_EOL, $options_str);
+    foreach($option_rows as $key => $row) {
+        $tmp = explode( ' : ', $row);
+        $options[$key]['value'] = $tmp[0];
+        $options[$key]['text'] = $tmp[1];
+    }
+    return $options;
+    
+}
+
 function forms2db_form($args) {
 
     $form_id = $args['id'];
@@ -30,9 +42,6 @@ function forms2db_form($args) {
     $content = ob_get_contents();
     ob_clean();
     return $content;
-
-
-
 
 }
 

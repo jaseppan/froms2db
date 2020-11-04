@@ -41,7 +41,6 @@ class Forms2dbForm {
 	public function __construct( $form_id ) {
 
 		$this->form_id = $form_id;
-        
 
     }
     

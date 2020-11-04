@@ -257,8 +257,7 @@ class Forms2db_Cpt {
                         $errors[$key]['text'] = __('Options are required');
                         $errors[$key]['value'] = 'missing-options';
                     } else {
-                        // Check is options formated correctly
-                        $options = $_POST['options'][$key];
+                        $options = forms2db_parse_options($_POST['options'][$key]);
                     }
                 }
                 $name = sanitize_text_field( $name );
