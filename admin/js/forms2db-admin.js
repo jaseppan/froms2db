@@ -20,8 +20,6 @@ jQuery( document ).ready(function($) {
 
 		var checkboxes = ['checkbox', 'radio', 'select']; 
 
-		
-
 		if( inArray($(this).val(), checkboxes) ) {
 			$( this ).closest('.forms2db-field-container').find('.options').removeClass('hidden');
 		} else {
@@ -29,10 +27,25 @@ jQuery( document ).ready(function($) {
 		}
 	});
 
+	/**
+	 * Sorting fields
+	 */
+
 	$(function() {
 		$( "#forms2db-fields" ).sortable();
 		$( "#forms2db-fields" ).disableSelection();
 	});
+
+	/**
+	 * Copy shortcode
+	 */
+
+	 $("#form2db-form-shortcode-conteiner").click(function() {
+		
+		copyClipboard("form2db-form-shortcode", "Shortcode copied to clipboard");
+		  
+	 });
+
 });
 
 function inArray(needle, haystack) {
@@ -43,4 +56,27 @@ function inArray(needle, haystack) {
     return false;
 }
 
+function copyClipboard(elem_id, message) {
+	var elm = document.getElementById(elem_id);
+	// for Internet Explorer
+  
+	if(document.body.createTextRange) {
+	  var range = document.body.createTextRange();
+	  range.moveToElementText(elm);
+	  range.select();
+	  document.execCommand("Copy");
+	  alert(message);
+	}
+	else if(window.getSelection) {
+	  // other browsers
+  
+	  var selection = window.getSelection();
+	  var range = document.createRange();
+	  range.selectNodeContents(elm);
+	  selection.removeAllRanges();
+	  selection.addRange(range);
+	  document.execCommand("Copy");
+	  alert(message);
+	}
+  }
 

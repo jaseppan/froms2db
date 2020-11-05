@@ -77,7 +77,7 @@ class Forms2db_Admin {
 
 		
 		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/forms2db-admin.css' );
-
+		wp_enqueue_style( 'load-fa', 'https://use.fontawesome.com/releases/v5.5.0/css/all.css' );
 		
 	}
 

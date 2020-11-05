@@ -22,6 +22,8 @@
  */
 class Forms2db_Cpt {
 
+    private $form_id;
+
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -31,15 +33,17 @@ class Forms2db_Cpt {
 	 */
 	public function __construct() {
         $this->form_id = intval($_GET['post']);
+        
         add_action( 'init', array($this, 'add_post_type') );
         add_action( 'save_post_forms2db-forms', array($this, 'save_fields') );
         add_action( 'add_meta_boxes', array($this, 'metaboxes') );
+        add_action( 'edit_form_after_title', array($this, 'form_shortcode_meta_box') );
     }
 
 
-    /*
-    * Creating a function to create our CPT
-    */
+    /**
+     * Function to create our CPT
+     */
     
     public function add_post_type() {
     
@@ -75,18 +79,19 @@ class Forms2db_Cpt {
             * is like Posts.
             */ 
             'hierarchical'        => false,
-            'public'              => true,
+            'public'              => false,
             'show_ui'             => true,
             'show_in_menu'        => true,
             'show_in_nav_menus'   => true,
             'show_in_admin_bar'   => true,
             'menu_position'       => 5,
             'can_export'          => true,
-            'has_archive'         => true,
-            'exclude_from_search' => false,
+            'has_archive'         => false,
+            'exclude_from_search' => true,
             'publicly_queryable'  => true,
             'capability_type'     => 'post',
-            'show_in_rest' => true,
+            'rewrite' => false,
+            'show_in_rest' => false,
     
         );
         
@@ -94,6 +99,10 @@ class Forms2db_Cpt {
         register_post_type( 'forms2db-forms', $args );
     
     }
+
+    /**
+     * Add Metaboxes
+     */
 
     public function metaboxes() {
         add_meta_box(
@@ -104,9 +113,19 @@ class Forms2db_Cpt {
             'normal',         // Context
             'high'         // Priority
         );
+
     }
 
-    function form_fields_meta_box() {        
+    public function form_shortcode_meta_box() {
+        echo sprintf('<div id="form2db-form-shortcode-conteiner">
+            <strong>Shortcode: </strong><span id="form2db-form-shortcode" class="copyable">[forms2db-form id=%d]</span> <i class="fas fa-copy copier"></i>
+            </div>', 
+            $this->form_id,
+            __('Click to copy shortcode to clipboard')
+        );
+    }
+
+    public function form_fields_meta_box() {        
         $fields = get_post_meta($this->form_id, '_forms2db_form', true);
         ob_start();        
         require('views/form-fields-metabox.php');
@@ -115,7 +134,7 @@ class Forms2db_Cpt {
         echo $fields;
     }
 
-    function field_row($fields) { 
+    public function field_row($fields) { 
 
         if( !isset($fields) ) {
             $fields = [0 => ''];
@@ -133,7 +152,7 @@ class Forms2db_Cpt {
         }
     }
 
-    function option_array_to_text($options) {
+    public function option_array_to_text($options) {
         
         $option_text = '';
         foreach( $options as $option ) {

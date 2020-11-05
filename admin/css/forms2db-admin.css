@@ -42,6 +42,20 @@
     border-color: #cacaca;
 }
 
+#form2db-form-shortcode-conteiner {
+    background: #dadada;
+    padding: 10px;
+    border: solid #b1b1b1;
+    position: relative;
+    cursor: pointer;
+}
+
+.copier {
+    position: absolute;
+    right: 10px;
+    top: 12px;
+}
+
 .col-2 {
     width: 16.67%;
 }
