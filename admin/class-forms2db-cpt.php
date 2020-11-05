@@ -125,8 +125,9 @@ class Forms2db_Cpt {
         );
     }
 
-    public function form_fields_meta_box() {        
+    public function form_fields_meta_box() {    
         $fields = get_post_meta($this->form_id, '_forms2db_form', true);
+        $submit_text = isset($fields['submit-text']) ? $fields['submit-text'] : __('Submit');
         ob_start();        
         require('views/form-fields-metabox.php');
         $fields = ob_get_contents();
@@ -148,7 +149,8 @@ class Forms2db_Cpt {
         $checkboxes = ['checkbox', 'radio', 'select'];  
         
         foreach( $fields as $key => $field ) { 
-            require('views/partials/form-fields.php');            
+            if(is_array($field))
+                require('views/partials/form-fields.php');            
         }
     }
 
@@ -229,8 +231,13 @@ class Forms2db_Cpt {
 
         }
 
+
+
         if( empty($errors) ) {
+            
+            $fields['submit-text'] = sanitize_text_field( $_POST['submit-text'] );
             update_post_meta( $post_id, '_forms2db_form', $fields );
+
         } else {
             // Handle errors
         }
