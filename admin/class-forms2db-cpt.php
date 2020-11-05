@@ -22,7 +22,6 @@
  */
 class Forms2db_Cpt {
 
-
 	/**
 	 * Initialize the class and set its properties.
 	 *
@@ -31,6 +30,7 @@ class Forms2db_Cpt {
 	 * @param      string    $version    The version of this plugin.
 	 */
 	public function __construct() {
+        $this->form_id = intval($_GET['post']);
         add_action( 'init', array($this, 'add_post_type') );
         add_action( 'save_post_forms2db-forms', array($this, 'save_fields') );
         add_action( 'add_meta_boxes', array($this, 'metaboxes') );
@@ -106,49 +106,8 @@ class Forms2db_Cpt {
         );
     }
 
-    function form_fields_meta_box() {
-
-        $fields = array(
-            array(
-                'field-type'                  => 'select',
-                'name'                  => 'eka',
-                'label'                 => 'Eka',
-                'value'                 => 'textarea',
-                'options'               => array(
-                    array(
-                        'value' => 'input',
-                        'text'  => __('Input'),
-                    ),
-                    array(
-                        'value' => 'checkbox',
-                        'text'  => __('Checkbox'),
-                    ),
-                    array(
-                        'value' => 'radio',
-                        'text'  => __('Radio'),
-                    ),
-                    array(
-                        'value' => 'select',
-                        'text'  => __('Select'),
-                    ),
-                    array(
-                        'value' => 'textarea',
-                        'text'  => __('Textarea'),
-                    ),
-                    array(
-                        'value' => 'file',
-                        'text'  => __('File'),
-                    ),
-                ),
-            ),
-            array(
-                'field-type'                  => 'text',
-                'name'                  => 'field-type',
-                'label'                 => 'Nimi',
-                'value'                 => 'Janne',  
-            ),
-        );
-
+    function form_fields_meta_box() {        
+        $fields = get_post_meta($this->form_id, '_forms2db_form', true);
         ob_start();        
         require('views/form-fields-metabox.php');
         $fields = ob_get_contents();
@@ -185,52 +144,8 @@ class Forms2db_Cpt {
 
     }
 
-
-    function select_type($value = '') {
-
-        $args = array(
-            'field-type'                  => 'file',
-            'value'                 => 'textarea',
-            'label'                 => __('Field type'),
-            'name'                  => 'field-type',
-            'options'               => array(
-                array(
-                    'value' => 'input',
-                    'text'  => __('Input'),
-                ),
-                array(
-                    'value' => 'checkbox',
-                    'text'  => __('Checkbox'),
-                ),
-                array(
-                    'value' => 'radio',
-                    'text'  => __('Radio'),
-                ),
-                array(
-                    'value' => 'select',
-                    'text'  => __('Select'),
-                ),
-                array(
-                    'value' => 'textarea',
-                    'text'  => __('Textarea'),
-                ),
-                array(
-                    'value' => 'file',
-                    'text'  => __('File'),
-                ),
-            ),
-        );
-
-        $fields_obj = new Forms2db_Fields();
-        return $fields_obj->add_field($args);
-
-    }
-
     public function save_fields($post_id) {
         
-        //if(!isset( $_POST['name'] ) || $_POST['name'] )
-            //return;
-
         $allowed_types = [
             'text',
             'number',
@@ -300,9 +215,6 @@ class Forms2db_Cpt {
         } else {
             // Handle errors
         }
-
-
-
 
     }
 
