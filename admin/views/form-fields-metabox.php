@@ -12,7 +12,7 @@
 <div class="forms2db-fields-row">
     <div class="forms2db-fields-col col-6">
         <div class="inner-col">
-            <label for="submit-text"><?php echo __('Text in submit button') ?></label>
+            <label for="submit-text"><?php _e('Text in submit button') ?></label>
             <input type="text" name="submit-text" id="submit-text" value="<?php echo $submit_text; ?>">
         </div>
     </div>

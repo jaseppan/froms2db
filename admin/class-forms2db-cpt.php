@@ -113,7 +113,6 @@ class Forms2db_Cpt {
             'normal',         // Context
             'high'         // Priority
         );
-
     }
 
     public function form_shortcode_meta_box() {
@@ -127,7 +126,24 @@ class Forms2db_Cpt {
 
     public function form_fields_meta_box() {    
         $fields = get_post_meta($this->form_id, '_forms2db_form', true);
+        
+        // Default values
+        if(!isset($fields) || !is_array($fields)) {
+            $fields = array(
+                array (
+                    "field-type"  => "text",
+                    "label"       => "",
+                    "name"        => "",
+                    "value"       => "",
+                    "attributes"  => "",
+                ),
+                "submit-text" => "Submit",
+            );
+            
+        }
+        
         $submit_text = isset($fields['submit-text']) ? $fields['submit-text'] : __('Submit');
+        
         ob_start();        
         require('views/form-fields-metabox.php');
         $fields = ob_get_contents();
@@ -166,81 +182,85 @@ class Forms2db_Cpt {
     }
 
     public function save_fields($post_id) {
-        
-        $allowed_types = [
-            'text',
-            'number',
-            'email',
-            'hidden',
-            'select',
-            'checkbox',
-            'radio',
-            'textarea',
-            'file'
 
-        ];
+        if(isset($_POST["action"]) && $_POST["action"] == 'save-forms2db-form') {
 
-        $checkboxes = ['checkbox', 'radio', 'select'];  // These types require options
-        
-        $errors =  [];
-
-        foreach ($_POST['name'] as $key => $name ) {
-
-            if( isset($name) && isset($_POST['field-type'][$key] ) && in_array($_POST['field-type'][$key], $allowed_types) ) {
-
-                if( in_array($_POST['field-type'][$key],  $checkboxes) ) {
-                    if(!isset($_POST['options'][$key]) ) {
-                        $errors[$key]['text'] = __('Options are required');
-                        $errors[$key]['value'] = 'missing-options';
-                    } else {
-                        $options = forms2db_parse_options($_POST['options'][$key]);
-                    }
-                }
-                $name = sanitize_text_field( $name );
-                $type = $_POST['field-type'][$key]; // Only values listed in $allowed_types are possible
-                $label = isset($_POST['label'][$key] ) ? sanitize_text_field( $_POST['label'][$key] ) : '';
-                $value = isset($_POST['value'][$key] ) ? sanitize_text_field( $_POST['value'][$key] ) : '';
-                $attributes = isset($_POST['attributes'][$key]) ? sanitize_text_field( $_POST['attributes'][$key] ) : '';
+            $allowed_types = [
+                'text',
+                'number',
+                'email',
+                'hidden',
+                'select',
+                'checkbox',
+                'radio',
+                'textarea',
+                'file'
     
-                $fields[$key] = array(
-                    'field-type'                  => $type,
-                    'name'                  => $name,
-                    'label'                 => $label,
-                    'value'                 => $value,
-                    'attributes'            => $attributes, 
-                );
-
-                if( in_array($type, $checkboxes) ) {
-                    $fields[$key]['options'] = $options;
-                }
-
-            } else {
-                if( !isset($name) ) {
-                    $errors[$key]['text'] = __('Name is required');
-                    $errors[$key]['value'] = 'missing-name';
-                }
-                if( !isset($_POST['field-type'][$key]) ) {
-                    $errors[$key]['text'] = __('Type is required');
-                    $errors[$key]['value'] = 'missing-type';
-                } elseif( in_array($_POST['field-type'][$key], $allowed_types) ) {
-                    $errors[$key]['text'] = __('Invalid type');
-                    $errors[$key]['value'] = 'invalid-type';
-                }           
-
-            }
-
-        }
-
-
-
-        if( empty($errors) ) {
+            ];
+    
+            $checkboxes = ['checkbox', 'radio', 'select'];  // These types require options
             
-            $fields['submit-text'] = sanitize_text_field( $_POST['submit-text'] );
-            update_post_meta( $post_id, '_forms2db_form', $fields );
-
-        } else {
-            // Handle errors
+            $errors =  [];
+    
+            foreach ($_POST['name'] as $key => $name ) {
+    
+                if( isset($name) && isset($_POST['field-type'][$key] ) && in_array($_POST['field-type'][$key], $allowed_types) ) {
+    
+                    if( in_array($_POST['field-type'][$key],  $checkboxes) ) {
+                        if(!isset($_POST['options'][$key]) ) {
+                            $errors[$key]['text'] = __('Options are required');
+                            $errors[$key]['value'] = 'missing-options';
+                        } else {
+                            $options = forms2db_parse_options($_POST['options'][$key]);
+                        }
+                    }
+                    $name = sanitize_text_field( $name );
+                    $type = $_POST['field-type'][$key]; // Only values listed in $allowed_types are possible
+                    $label = isset($_POST['label'][$key] ) ? sanitize_text_field( $_POST['label'][$key] ) : '';
+                    $value = isset($_POST['value'][$key] ) ? sanitize_text_field( $_POST['value'][$key] ) : '';
+                    $attributes = isset($_POST['attributes'][$key]) ? sanitize_text_field( $_POST['attributes'][$key] ) : '';
+        
+                    $fields[$key] = array(
+                        'field-type'                  => $type,
+                        'name'                  => $name,
+                        'label'                 => $label,
+                        'value'                 => $value,
+                        'attributes'            => $attributes, 
+                    );
+    
+                    if( in_array($type, $checkboxes) ) {
+                        $fields[$key]['options'] = $options;
+                    }
+    
+                } else {
+                    if( !isset($name) ) {
+                        $errors[$key]['text'] = __('Name is required');
+                        $errors[$key]['value'] = 'missing-name';
+                    }
+                    if( !isset($_POST['field-type'][$key]) ) {
+                        $errors[$key]['text'] = __('Type is required');
+                        $errors[$key]['value'] = 'missing-type';
+                    } elseif( in_array($_POST['field-type'][$key], $allowed_types) ) {
+                        $errors[$key]['text'] = __('Invalid type');
+                        $errors[$key]['value'] = 'invalid-type';
+                    }           
+    
+                }
+    
+            }
+    
+    
+    
+            if( empty($errors) ) {
+                
+                $fields['submit-text'] = sanitize_text_field( $_POST['submit-text'] );
+                update_post_meta( $post_id, '_forms2db_form', $fields );
+    
+            } else {
+                // Handle errors
+            }
         }
+        
 
     }
 
