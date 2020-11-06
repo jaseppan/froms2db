@@ -38,6 +38,7 @@ class Forms2db_Cpt {
         add_action( 'save_post_forms2db-forms', array($this, 'save_fields') );
         add_action( 'add_meta_boxes', array($this, 'metaboxes') );
         add_action( 'edit_form_after_title', array($this, 'form_shortcode_meta_box') );
+        add_action( 'edit_form_after_title', array($this, 'form_fields') );
     }
 
 
@@ -106,13 +107,24 @@ class Forms2db_Cpt {
 
     public function metaboxes() {
         add_meta_box(
-            'form-fields',      // Unique ID
-            esc_html__( 'Fields', 'forms2db' ),    // Title
-            array($this, 'form_fields_meta_box'),   // Callback function
+            'admin-message',      // Unique ID
+            esc_html__( 'Admin message', 'forms2db' ),    // Title
+            array($this, 'admin_message'),   // Callback function
             'forms2db-forms',         // Admin page (or post type)
             'normal',         // Context
             'high'         // Priority
         );
+
+        add_meta_box(
+            'user-message',      // Unique ID
+            esc_html__( 'User message', 'forms2db' ),    // Title
+            array($this, 'user_message'),   // Callback function
+            'forms2db-forms',         // Admin page (or post type)
+            'normal',         // Context
+            'high'         // Priority
+        );
+
+
     }
 
     public function form_shortcode_meta_box() {
@@ -124,7 +136,7 @@ class Forms2db_Cpt {
         );
     }
 
-    public function form_fields_meta_box() {    
+    public function form_fields() {    
         $fields = get_post_meta($this->form_id, '_forms2db_form', true);
         
         // Default values
@@ -260,9 +272,26 @@ class Forms2db_Cpt {
                 // Handle errors
             }
         }
-        
+    }
+
+    public function admin_message() {
+        global $post;
+
+        $content = get_post_meta($post->ID, '_forms2db_admin_message' , true );
+        $receivers = get_post_meta($post->ID, '_forms2db_admin_emails' , true ) ? get_post_meta($post->ID, '_forms2db_admin_emails' , true ) : '';
+        wp_editor( htmlspecialchars_decode($content), '_forms2db_admin_message', array("media_buttons" => false) );
+        echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-admin-emails' value='%s'><br />", __('Receiver emails', 'forms2db'), $receivers );
+        echo sprintf("<button id='forms2db-generate-admin-message' class='button'>%s</button>", __('Generate admin message') );
 
     }
+
+    public function user_message() {
+        $content = get_post_meta($post->ID, '_forms2db_admin_message' , true ) ;
+        wp_editor( htmlspecialchars_decode($content), '_forms2db_admin_message', array("media_buttons" => false) );
+    }
+
+
+
 
 }
 

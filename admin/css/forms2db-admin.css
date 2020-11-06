@@ -3,6 +3,12 @@
  * included in this file.
  */
 
+ div#forms2db-fields-container {
+    background-color: #ffffff;
+    padding: 10px;
+    border: 1px solid #cacaca;
+}
+
  .forms2db-field-container {
     border: solid #b3b3b3 1px;
     background-color: #ffffff;
