@@ -186,7 +186,7 @@ class Forms2db_Cpt {
         
         $option_text = '';
         foreach( $options as $option ) {
-            $option_text .= implode( ' : ', $option ) . "\r";
+            $option_text .= implode( ' : ', $option );
         }
 
         return $option_text;
@@ -194,8 +194,8 @@ class Forms2db_Cpt {
     }
 
     public function save_fields($post_id) {
-
-        if(isset($_POST["action"]) && $_POST["action"] == 'save-forms2db-form') {
+        
+        if(isset($_POST["forms2db-admin-action"]) && $_POST["forms2db-admin-action"] == 'editform') {
 
             $allowed_types = [
                 'text',
@@ -226,6 +226,7 @@ class Forms2db_Cpt {
                             $options = forms2db_parse_options($_POST['options'][$key]);
                         }
                     }
+
                     $name = sanitize_text_field( $name );
                     $type = $_POST['field-type'][$key]; // Only values listed in $allowed_types are possible
                     $label = isset($_POST['label'][$key] ) ? sanitize_text_field( $_POST['label'][$key] ) : '';

@@ -26,9 +26,12 @@ function forms2db_parse_options($options_str) {
     $option_rows = explode(PHP_EOL, $options_str);
     foreach($option_rows as $key => $row) {
         $tmp = explode( ' : ', $row);
-        $options[$key]['value'] = $tmp[0];
-        $options[$key]['text'] = $tmp[1];
+        if( !empty($tmp[0]) && !empty($tmp[1]) ) {
+            $options[$key]['value'] = $tmp[0];
+            $options[$key]['text'] = $tmp[1];
+        }
     }
+
     return $options;
     
 }

@@ -19,3 +19,4 @@
         </div>
     </div>
 </div>
+<input type="hidden" name="forms2db-admin-action" value="editform">

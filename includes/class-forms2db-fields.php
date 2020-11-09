@@ -25,6 +25,9 @@ class Forms2db_Fields {
 
     public function add_field($args) {
 
+        if( !is_array($args) )
+            return;
+
         // Set defauts
         $defaults = array(
             'field-type'            => 'input',
