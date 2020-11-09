@@ -267,6 +267,7 @@ class Forms2db_Cpt {
             if( empty($errors) ) {
                 
                 $fields['submit-text'] = sanitize_text_field( $_POST['submit-text'] );
+                $fields['nonce'] = wp_generate_password();
                 update_post_meta( $post_id, '_forms2db_form', $fields );
     
             } else {

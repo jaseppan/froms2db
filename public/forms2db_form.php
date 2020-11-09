@@ -51,11 +51,17 @@ class Forms2dbForm {
     public function add_fields() {
         
         $fields_obj = new Forms2db_Fields();
-        $form_fields = get_post_meta($this->form_id, '_forms2db_form', true);
-
+		$form_fields = get_post_meta($this->form_id, '_forms2db_form', true);
+		
         foreach($form_fields as $form_field) {
             echo $fields_obj->add_field($form_field);
-        }
+		}
+
+		wp_nonce_field( $form_fields['nonce'], 'forms2db-nonce' );
+		echo '<input type="hidden" name="forms2db-form-user-action" value="saveform">';
+		echo sprintf('<input type="hidden" name="forms2db-form-id" value="%d">', $this->form_id);
+		echo sprintf('<input type="submit" name="submit" value="%s">', $form_fields['submit-text']);
+		
     }
 
 }
