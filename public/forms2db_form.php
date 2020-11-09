@@ -45,7 +45,11 @@ class Forms2dbForm {
     }
     
     public function view() {
-        require 'views/forms2db-form.php';
+		if( isset($_POST['forms2db-form-user-action']) ) {
+			require 'views/forms2db-thank-you.php';
+		} else {
+			require 'views/forms2db-form.php';
+		}
     }
     
     public function add_fields() {
@@ -62,6 +66,6 @@ class Forms2dbForm {
 		echo sprintf('<input type="hidden" name="forms2db-form-id" value="%d">', $this->form_id);
 		echo sprintf('<input type="submit" name="submit" value="%s">', $form_fields['submit-text']);
 		
-    }
+	}
 
 }

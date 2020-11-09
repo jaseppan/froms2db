@@ -51,6 +51,7 @@ class Forms2db_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		add_action('init', array($this, 'save_form'));
 
 	}
 
@@ -98,6 +99,20 @@ class Forms2db_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/forms2db-public.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	public function save_form() {
+		/**
+		 * Validate
+		 */
+
+		/**
+		 * Sanitize
+		 */ 
+
+		/**
+		 * Save
+		 */
 	}
 
 }
