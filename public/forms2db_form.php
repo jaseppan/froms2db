@@ -40,7 +40,7 @@ class Forms2dbForm {
 	 */
 	public function __construct( $form_id ) {
 
-		$this->form_id = $form_id;
+		$this->form_id = intval($form_id);
 
     }
     
@@ -57,16 +57,21 @@ class Forms2dbForm {
         $fields_obj = new Forms2db_Fields();
 		$form_fields = get_post_meta($this->form_id, '_forms2db_form', true);
 		
-        foreach($form_fields as $form_field) { ?>
-			<div class="forms2db-field-container <?php echo isset($form_field['container-classes']) ? esc_attr($form_field['container-classes']) : ''  ?>">
-				<?php echo $fields_obj->add_field($form_field); ?>
-			</div>
-		<?php }
+		do_action('before_form');
+        foreach($form_fields as $form_field) { 
+			if( is_array( $form_field ) ) { ?>
+				<div class="forms2db-field-container <?php echo isset($form_field['container-classes']) ? esc_attr($form_field['container-classes']) : ''  ?>">
+					<?php echo $fields_obj->add_field($form_field); ?>
+				</div>
+			<?php }
+		}
 
-		wp_nonce_field( $form_fields['nonce'], 'forms2db-nonce' );
+		wp_nonce_field( esc_attr($form_fields['nonce']), 'forms2db-nonce' );
 		echo '<input type="hidden" name="forms2db-form-user-action" value="saveform">';
 		echo sprintf('<input type="hidden" name="forms2db-form-id" value="%d">', $this->form_id);
-		echo sprintf('<input type="submit" name="submit" value="%s">', $form_fields['submit-text']);
+		do_action('before_submit');
+		echo sprintf('<div class="forms2db-field-container submit-container"><input type="submit" name="submit" value="%s"></div>', esc_html($form_fields['submit-text']));
+		do_action('after_form');
 		
 	}
 
