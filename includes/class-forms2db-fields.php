@@ -56,7 +56,7 @@ class Forms2db_Fields {
                 $field .= sprintf('<select name="%s" id="%s" class="%s" %s>', 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['class']), 
+                    esc_attr($args['field-classes']), 
                     esc_attr($args['attributes'])
                 );
                 $field .= implode(' ', array_map(array($this, "add_select_option"), 
@@ -71,7 +71,7 @@ class Forms2db_Fields {
                     esc_attr($args['field-type']), 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['class']), 
+                    esc_attr($args['field-classes']), 
                     esc_attr($args['value'])
                 );
                 break;    
@@ -85,7 +85,7 @@ class Forms2db_Fields {
                 $type = array_fill(0, $options_count, esc_attr( $args['field-type']) );
                 $id = array_fill( 0, $options_count, esc_attr( $args['id'] ) );
                 $id_numbers = array_fill(0, $options_count, esc_attr( $args['id']) );
-                $class = array( 0, $options_count, esc_attr( $args['class']) );
+                $class = array( 0, $options_count, esc_attr( $args['field-classes']) );
                 $field = implode(' ', array_map(array($this, "add_checkbox"), 
                     $name, 
                     $options, 
@@ -101,7 +101,7 @@ class Forms2db_Fields {
                 $field .= sprintf('<textarea name="%s" id="%s" class="%s">%s</textarea>', 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['class']), 
+                    esc_attr($args['field-classes']), 
                     esc_attr($args['value'])
                 );
                 break;
@@ -112,7 +112,7 @@ class Forms2db_Fields {
                     esc_attr($args['field-type']), 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['class']), 
+                    esc_attr($args['field-classes']), 
                     $size,
                     $accept
                 );

@@ -43,12 +43,6 @@
                 </div>
                 <div class="forms2db-fields-col col-4">
                     <div class="inner-col">
-                        <label for="type" class="block"><?php _e('Class') ?></label>
-                        <input type="text" name="class[]" value="<?php echo (isset($field['class'])) ? $field['class'] : '' ?>">
-                    </div>
-                </div>
-                <div class="forms2db-fields-col col-4">
-                    <div class="inner-col">
                         <label for="type" class="block"><?php _e('Attributes') ?></label>
                         <input type="text" name="attributes[]" value="<?php echo (isset($field['attributes'])) ? $field['attributes'] : '' ?>">
                     </div>
@@ -63,6 +57,18 @@
                     <div class="inner-col">
                         <label for="type" class="block"><?php _e('Required') ?></label>
                         <input type="checkbox" name="required[]" value="<?php echo (isset($field['required'])) ? $field['required'] : '' ?>">
+                    </div>
+                </div>
+                <div class="forms2db-fields-col col-4">
+                    <div class="inner-col">
+                        <label for="type" class="block"><?php _e('Field Classes') ?></label>
+                        <input type="text" name="field-classes[]" value="<?php echo (isset($field['field-classes'])) ? $field['field-classes'] : '' ?>">
+                    </div>
+                </div>
+                <div class="forms2db-fields-col col-4">
+                    <div class="inner-col">
+                        <label for="type" class="block"><?php _e('Container Classes') ?></label>
+                        <input type="text" name="container-classes[]" value="<?php echo (isset($field['container-classes'])) ? $field['container-classes'] : '' ?>">
                     </div>
                 </div>
                 <div class="forms2db-fields-col col-12">

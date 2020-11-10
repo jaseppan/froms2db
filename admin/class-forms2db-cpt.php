@@ -232,13 +232,17 @@ class Forms2db_Cpt {
                     $label = isset($_POST['label'][$key] ) ? sanitize_text_field( $_POST['label'][$key] ) : '';
                     $value = isset($_POST['value'][$key] ) ? sanitize_text_field( $_POST['value'][$key] ) : '';
                     $attributes = isset($_POST['attributes'][$key]) ? sanitize_text_field( $_POST['attributes'][$key] ) : '';
-        
+                    $field_classes = isset($_POST['field-classes'][$key]) ? sanitize_text_field( $_POST['field-classes'][$key] ) : '';
+                    $container_classes = isset($_POST['container-classes'][$key]) ? sanitize_text_field( $_POST['container-classes'][$key] ) : '';
+                    
                     $fields[$key] = array(
-                        'field-type'                  => $type,
+                        'field-type'            => $type,
                         'name'                  => $name,
                         'label'                 => $label,
                         'value'                 => $value,
                         'attributes'            => $attributes, 
+                        'field-classes'         => $field_classes, 
+                        'container-classes'     => $container_classes, 
                     );
     
                     if( in_array($type, $checkboxes) ) {
@@ -261,8 +265,6 @@ class Forms2db_Cpt {
                 }
     
             }
-    
-    
     
             if( empty($errors) ) {
                 
