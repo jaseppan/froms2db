@@ -54,38 +54,38 @@ class Forms2db_Fields {
                 if(!isset($args['options']))
                     return __("Options required for this kind of field");
                 $field .= sprintf('<select name="%s" id="%s" class="%s" %s>', 
-                    $args['name'], 
-                    $args['id'], 
-                    $args['class'], 
-                    $args['attributes']
+                    esc_attr($args['name']), 
+                    esc_attr($args['id']), 
+                    esc_attr($args['class']), 
+                    esc_attr($args['attributes'])
                 );
                 $field .= implode(' ', array_map(array($this, "add_select_option"), 
                         $args['options'] , 
-                        array_fill(0, count($args['options']), $args['value'])
+                        array_fill(0, count($args['options']), esc_attr($args['value']))
                     )
                 );
                 $field .= '</select>';
                 break;
             case in_array( $args['field-type'], $inputs ) :
                 $field .= sprintf('<input type="%s" name="%s" id="%s" class="%s" value="%s">', 
-                    $args['field-type'], 
-                    $args['name'], 
-                    $args['id'], 
-                    $args['class'], 
-                    $args['value']
+                    esc_attr($args['field-type']), 
+                    esc_attr($args['name']), 
+                    esc_attr($args['id']), 
+                    esc_attr($args['class']), 
+                    esc_attr($args['value'])
                 );
                 break;    
             case in_array( $args['field-type'], $checkboxes ) :
                 if(!isset($args['options']))
                     return __("Options required for this kind of field");
-                $options = $args['options'];
+                $options = esc_html($args['options']);
                 $options_count = count($args['options']);
-                $value = array_fill(0, $options_count, $args['value']);
-                $name = array_fill(0, $options_count, $args['name']);
-                $type = array_fill(0, $options_count, $args['field-type']);
-                $id = array_fill( 0, $options_count, $args['id'] );
-                $id_numbers = array_fill(0, $options_count, $args['id']);
-                $class = array( 0, $options_count, $args['class']);
+                $value = array_fill(0, $options_count, esc_attr( $args['value']) );
+                $name = array_fill(0, $options_count, esc_attr( $args['name']) );
+                $type = array_fill(0, $options_count, esc_attr( $args['field-type']) );
+                $id = array_fill( 0, $options_count, esc_attr( $args['id'] ) );
+                $id_numbers = array_fill(0, $options_count, esc_attr( $args['id']) );
+                $class = array( 0, $options_count, esc_attr( $args['class']) );
                 $field = implode(' ', array_map(array($this, "add_checkbox"), 
                     $name, 
                     $options, 
@@ -99,20 +99,20 @@ class Forms2db_Fields {
                 break;
             case "textarea" :
                 $field .= sprintf('<textarea name="%s" id="%s" class="%s">%s</textarea>', 
-                    $args['name'], 
-                    $args['id'], 
-                    $args['class'], 
-                    $args['value']
+                    esc_attr($args['name']), 
+                    esc_attr($args['id']), 
+                    esc_attr($args['class']), 
+                    esc_attr($args['value'])
                 );
                 break;
             case "file" :
-                $size = isset($args['size']) ? $args['size'] : '20';
-                $accept = isset($args['accept']) ? $args['accept'] : 'image/*';
+                $size = isset($args['size']) ? esc_attr($args['size']) : '20';
+                $accept = isset($args['accept']) ? esc_attr($args['accept']) : 'image/*';
                 $field .= sprintf('<input type="%s" name="%s" id="%s" class="%s" size="%s" accept="%s">', 
-                    $args['field-type'], 
-                    $args['name'], 
-                    $args['id'], 
-                    $args['class'], 
+                    esc_attr($args['field-type']), 
+                    esc_attr($args['name']), 
+                    esc_attr($args['id']), 
+                    esc_attr($args['class']), 
                     $size,
                     $accept
                 );
@@ -128,9 +128,9 @@ class Forms2db_Fields {
         $selected = ($option['value'] == $value) ? 'selected' : ''; 
 
         return sprintf('<option value="%s" %s>%s</option>', 
-            $option['value'], 
-            $selected, 
-            $option['text']
+            esc_attr($option['value']), 
+            esc_attr($selected), 
+            esc_attr($option['text'])
         );
 
     }
@@ -144,14 +144,14 @@ class Forms2db_Fields {
             $name .= '[]';
         
         return sprintf('<input type="%s" name="%s" id="%s" class="%s" value="%s" %s><label for="%s" class="froms2db-checkbox-label">%s</label>', 
-            $type, 
-            $name, 
-            $item_id, 
-            $class, 
-            $option['value'], 
-            $checked, 
-            $item_id, 
-            $option['text']
+            esc_attr($type), 
+            esc_attr($name), 
+            esc_attr($item_id), 
+            esc_attr($class), 
+            esc_attr($option['value']), 
+            esc_attr($checked), 
+            esc_attr($item_id), 
+            esc_attr($option['text'])
         );
     }
 }

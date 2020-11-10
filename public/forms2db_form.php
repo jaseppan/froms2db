@@ -57,9 +57,11 @@ class Forms2dbForm {
         $fields_obj = new Forms2db_Fields();
 		$form_fields = get_post_meta($this->form_id, '_forms2db_form', true);
 		
-        foreach($form_fields as $form_field) {
-            echo $fields_obj->add_field($form_field);
-		}
+        foreach($form_fields as $form_field) { ?>
+			<div class="forms2db-field-container <?php echo isset($form_field['container-classes']) ? esc_attr($form_field['container-classes']) : ''  ?>">
+				<?php echo $fields_obj->add_field($form_field); ?>
+			</div>
+		<?php }
 
 		wp_nonce_field( $form_fields['nonce'], 'forms2db-nonce' );
 		echo '<input type="hidden" name="forms2db-form-user-action" value="saveform">';
