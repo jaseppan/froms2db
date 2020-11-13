@@ -35,7 +35,7 @@ class Forms2db_Activator {
 		global $jal_db_version;
 		$charset_collate = $wpdb->get_charset_collate();
 	
-		$sql .= "CREATE TABLE " . $wpdb->prefix . "forms2db_data (
+		$sql .= "CREATE TABLE {$wpdb->prefix}forms2db_data (
 					id INT NOT NULL AUTO_INCREMENT,
 					post_id INT NOT NULL,
 					form_id INT NOT NULL,

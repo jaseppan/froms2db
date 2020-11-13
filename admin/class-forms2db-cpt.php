@@ -122,7 +122,17 @@ class Forms2db_Cpt {
             'forms2db-forms',         // Admin page (or post type)
             'normal',         // Context
             'high'         // Priority
+        );        
+
+        add_meta_box(
+            'form-settings',      // Unique ID
+            esc_html__( 'Settings', 'forms2db' ),    // Title
+            array($this, 'settings'),   // Callback function
+            'forms2db-forms',         // Admin page (or post type)
+            'side',         // Context
         );
+
+
 
 
     }
@@ -290,10 +300,30 @@ class Forms2db_Cpt {
     }
 
     public function user_message() {
-        $content = get_post_meta($post->ID, '_forms2db_admin_message' , true ) ;
-        wp_editor( htmlspecialchars_decode($content), '_forms2db_admin_message', array("media_buttons" => false) );
+        $content = get_post_meta($post->ID, '_forms2db_user_message' , true ) ;
+        wp_editor( htmlspecialchars_decode($content), '_forms2db_user_message', array("media_buttons" => false) );
     }
 
+    public function settings() {
+        $defauts = array(
+            'modifyable' => false, 
+            'confirmation-required' => false, 
+        );
+
+        $content = get_post_meta($post->ID, '__forms2db_form_settings', true );
+        ?>
+        <p>
+            <span><?php _e('Front end user can edit form content') ?></span><br/>
+            <input type="radio" name="modifyable" id="modifyable-true" value="true" <?php echo ($settings['modifyable'] == true ) ? 'checked' : '' ?> ><label for="modifyable-true"><?php _e('Yes') ?></label>
+            <input type="radio" name="modifyable" id="modifyable-false" value="false" <?php echo ($settings['modifyable'] == false ) ? 'checked' : '' ?> ><label for="modifyable-false"><?php _e('No') ?></label>
+        </p>
+        <p>
+            <span><?php _e('Confirmation required') ?></span><br/>
+            <input type="radio" name="confirmation-required" id="confirmation-required-true" value="true" <?php echo ($settings['confirmation-required'] == true ) ? 'checked' : '' ?> ><label for="confirmation-required-true"><?php _e('Yes') ?></label>
+            <input type="radio" name="confirmation-required" id="confirmation-required-false" value="false" <?php echo ($settings['confirmation-required'] == false ) ? 'checked' : '' ?> ><label for="confirmation-required-false"><?php _e('No') ?></label>
+        </p>
+        <?php 
+    }
 
 
 

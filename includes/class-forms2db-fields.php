@@ -1,13 +1,13 @@
 <?php
 
 /**
- * The functionality to create form fields.
+ * The class to create form fields.
  * 
  * @package    Forms2db
  * @subpackage Forms2db/includes
  * @author     Janne Seppänen <j.v.seppanen@gmail.com>
  */
-class Forms2db_Fields {
+class Forms2DbFields {
 
     /**
      * Create field
@@ -155,4 +155,3 @@ class Forms2db_Fields {
         );
     }
 }
-?>
