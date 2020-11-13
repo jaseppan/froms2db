@@ -9,6 +9,13 @@ jQuery( document ).ready(function($) {
 		$(this).closest('.forms2db-field-container').toggleClass('active');
 	});
 
+	$(document).on('focus', '.forms2db-fields-row input, .forms2db-fields-row select, .forms2db-fields-row textarea', function() {
+		console.log($(this).parent().parent().parent().prev().find('.forms2db-field-toggle'));
+		
+		$(this).parent().parent().parent().prev().find('.forms2db-field-toggle span').addClass('active');
+		$(this).closest('.forms2db-field-container').addClass('active');
+	});
+
 	$(document).on('click', '.forms2db-field-delete span', function() {
 		var r = confirm("Are sure!");
 		if (r == true) {
@@ -78,5 +85,4 @@ function copyClipboard(elem_id, message) {
 	  document.execCommand("Copy");
 	  alert(message);
 	}
-  }
-
+}
