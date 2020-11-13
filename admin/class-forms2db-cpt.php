@@ -35,7 +35,7 @@ class Forms2db_Cpt {
         $this->form_id = intval($_GET['post']);
         
         add_action( 'init', array($this, 'add_post_type') );
-        add_action( 'save_post_forms2db-forms', array($this, 'save_fields') );
+        add_action( 'save_post_forms2db-forms', array($this, 'save_forms_data') );
         add_action( 'add_meta_boxes', array($this, 'metaboxes') );
         add_action( 'edit_form_after_title', array($this, 'form_shortcode_meta_box') );
         add_action( 'edit_form_after_title', array($this, 'form_fields') );
@@ -203,9 +203,18 @@ class Forms2db_Cpt {
 
     }
 
-    public function save_fields($post_id) {
+    public function save_forms_data($post_id) {
+
+        $required_capability = (get_option( 'forms2db_edit_cap' )) ? get_option( 'forms2db_edit_cap' ) : 'edit_posts';
+
+        if(!current_user_can($required_capability))
+            return;
         
         if(isset($_POST["forms2db-admin-action"]) && $_POST["forms2db-admin-action"] == 'editform') {
+
+            /**
+             * save fields
+             */
 
             $allowed_types = [
                 'text',
@@ -285,8 +294,53 @@ class Forms2db_Cpt {
             } else {
                 // Handle errors
             }
+
+            /**
+             * Save settings
+             */
+            if(isset( $_POST['modifyable'] ))
+                $settings['modifyable'] = (boolean) $_POST['modifyable'];
+            
+            if(isset( $_POST['confirmation-required'] ))
+                $settings['confirmation-required'] = (boolean) $_POST['confirmation-required'];
+            
+            update_post_meta( $post_id, '_forms2db_settings',  $settings );
+
+            /**
+             * Save admin message
+             */
+
+            if(isset( $_POST['_forms2db_admin_message'] )) {
+                $forms2db_admin_message = sanitize_text_field($_POST['_forms2db_admin_message']);
+                update_post_meta( $post_id, '_forms2db_admin_message',  $forms2db_admin_message );
+            }
+
+            if(isset( $_POST['forms2db-admin-emails'] )) {
+                if(is_email( $_POST['forms2db-admin-emails'] )) {
+                    $forms2db_admin_emails = sanitize_text_field($_POST['forms2db-admin-emails']);
+                    update_post_meta( $post_id, '_forms2db_admin_emails',  $forms2db_admin_emails );
+                } else {
+                    // handle error
+                }
+            }
+
+
+            /**
+             * Save user message
+             */
+
+            if(isset( $_POST["_forms2db_user_message"] )) {
+                $forms2db_user_message = sanitize_text_field($_POST["_forms2db_user_message"]);
+                update_post_meta( $post_id, '_forms2db_user_message',  $forms2db_user_message );
+            }
+
+
         }
     }
+
+    /**
+     * metaboxes
+     */
 
     public function admin_message() {
         global $post;
@@ -300,31 +354,37 @@ class Forms2db_Cpt {
     }
 
     public function user_message() {
-        $content = get_post_meta($post->ID, '_forms2db_user_message' , true ) ;
+        global $post;
+
+        $content = get_post_meta($post->ID, '_forms2db_user_message' , true );
         wp_editor( htmlspecialchars_decode($content), '_forms2db_user_message', array("media_buttons" => false) );
     }
 
     public function settings() {
+
+        global $post;
+
         $defauts = array(
             'modifyable' => false, 
             'confirmation-required' => false, 
         );
 
-        $content = get_post_meta($post->ID, '__forms2db_form_settings', true );
+        $settings = get_post_meta($post->ID, '_forms2db_settings', true );
+
+        //$settings = array_merge($defauts, $settings );
         ?>
         <p>
             <span><?php _e('Front end user can edit form content') ?></span><br/>
-            <input type="radio" name="modifyable" id="modifyable-true" value="true" <?php echo ($settings['modifyable'] == true ) ? 'checked' : '' ?> ><label for="modifyable-true"><?php _e('Yes') ?></label>
-            <input type="radio" name="modifyable" id="modifyable-false" value="false" <?php echo ($settings['modifyable'] == false ) ? 'checked' : '' ?> ><label for="modifyable-false"><?php _e('No') ?></label>
+            <input type="radio" name="modifyable" id="modifyable-true" value=1 <?php echo ($settings['modifyable'] == true ) ? 'checked' : '' ?> ><label for="modifyable-true"><?php _e('Yes') ?></label>
+            <input type="radio" name="modifyable" id="modifyable-false" value=0 <?php echo ($settings['modifyable'] == false ) ? 'checked' : '' ?> ><label for="modifyable-false"><?php _e('No') ?></label>
         </p>
         <p>
             <span><?php _e('Confirmation required') ?></span><br/>
-            <input type="radio" name="confirmation-required" id="confirmation-required-true" value="true" <?php echo ($settings['confirmation-required'] == true ) ? 'checked' : '' ?> ><label for="confirmation-required-true"><?php _e('Yes') ?></label>
-            <input type="radio" name="confirmation-required" id="confirmation-required-false" value="false" <?php echo ($settings['confirmation-required'] == false ) ? 'checked' : '' ?> ><label for="confirmation-required-false"><?php _e('No') ?></label>
+            <input type="radio" name="confirmation-required" id="confirmation-required-true" value=1 <?php echo ($settings['confirmation-required'] == true ) ? 'checked' : '' ?> ><label for="confirmation-required-true"><?php _e('Yes') ?></label>
+            <input type="radio" name="confirmation-required" id="confirmation-required-false" value=0 <?php echo ($settings['confirmation-required'] == false ) ? 'checked' : '' ?> ><label for="confirmation-required-false"><?php _e('No') ?></label>
         </p>
         <?php 
     }
-
 
 
 }
