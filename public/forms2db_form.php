@@ -193,36 +193,41 @@ class Forms2dbForm {
 
 		global $wpdb;
 
-		if( is_user_logged_in() ) {
-			if(current_user_can( 'administrator' ) && isset($_GET['form-id'])) {
-				$where_data = array(
-					intval($_GET['form-id']),
-				);
-				$where_arg = 'id = %d';
-			} else {
+		if(current_user_can( 'administrator' ) && isset($_GET['form-id'])) {
+			$where_data = array(
+				intval($_GET['form-id']),
+			);
+			$where_arg = 'id = %d';
+		} else {
+			$form_settings = get_post_meta($this->form_id, '_forms2db_settings', true);
+			$modifyable = $form_settings['modifyable'];
+			if($modifyable == false) {
+				return;
+			} elseif( is_user_logged_in() ) {
 				// If no capability to view others data
 				$where_data = array(
 					get_current_user_id(),
 					$this->form_id,
 				);
 				$where_arg = 'user_id = %s && form_id = %s';
+	
+			} elseif( isset($_GET['form-id']) && isset($_GET['form-key']) ){
+				$where_data = array(
+					intval($_GET['form-id']),
+					sanitize_text_field($_GET['form-key']),
+				);
+	
+				$where_arg = 'id = %s && form_key = %d';
 			}
-
-		} elseif( isset($_GET['form-id']) && isset($_GET['form-key']) ){
-			$where_data = array(
-				intval($_GET['form-id']),
-				sanitize_text_field($_GET['form-key']),
-			);
-
-			$where_arg = 'id = %s && form_key = %d';
-		}
+		} 
+		
 
 		if(isset($where_arg) && isset($where_data)) {
-			$sql = "SELECT id, form_data FROM {$wpdb->prefix}forms2db_data WHERE {$where_arg};";
+			$sql = "SELECT form_data FROM {$wpdb->prefix}forms2db_data WHERE {$where_arg};";
 			$results = $wpdb->get_results($wpdb->prepare($sql, $where_data));
 
-			return $results;
-
+			$form_data = json_decode($results[0]->form_data, ARRAY_A);
+			return $form_data;
 		}
 		
 	}
