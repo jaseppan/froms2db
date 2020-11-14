@@ -23,7 +23,7 @@ class Forms2DbFields {
      * value
      */
 
-    public function add_field($args) {
+    public function add_field($args, $value = '') {
 
         if( !is_array($args) )
             return;
@@ -40,6 +40,13 @@ class Forms2DbFields {
         );
 
         $ərgs = array_merge($defaults, $args);
+
+        if(isset($_POST[$name])) {
+            $args['value'] = $_POST[$name];
+        } elseif(!empty($value)) {
+            $args['value'] = $value;
+        }
+
         
         // Types for input fields
         $inputs = ['text', 'number', 'email', 'hidden'];

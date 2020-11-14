@@ -1,20 +1,7 @@
 <?php
 
 /**
- * The admin-specific functionality of the plugin.
- *
- * @link       https://cidedot.com
- * @since      1.0.0
- *
- * @package    Forms2db
- * @subpackage Forms2db/admin
- */
-
-/**
- * The admin-specific functionality of the plugin.
- *
- * Defines the plugin name, version, and two examples hooks for how to
- * enqueue the admin-specific stylesheet and JavaScript.
+ * Define Form CPT, form content and metaboxes
  *
  * @package    Forms2db
  * @subpackage Forms2db/admin
@@ -37,18 +24,17 @@ class Forms2db_Cpt {
         add_action( 'init', array($this, 'add_post_type') );
         add_action( 'save_post_forms2db-forms', array($this, 'save_forms_data') );
         add_action( 'add_meta_boxes', array($this, 'metaboxes') );
-        add_action( 'edit_form_after_title', array($this, 'form_shortcode_meta_box') );
-        add_action( 'edit_form_after_title', array($this, 'form_fields') );
+        add_action( 'edit_form_after_title', array($this, 'form_shortcode') );
+        add_action( 'edit_form_after_title', array($this, 'form_content') );
     }
 
 
     /**
-     * Function to create our CPT
+     * Create Fields CPT
      */
     
     public function add_post_type() {
     
-        // Set UI labels for Custom Post Type
         $labels = array(
             'name'                => _x( 'Forms', 'Post Type General Name', 'forms2db' ),
             'singular_name'       => _x( 'Form', 'Post Type Singular Name', 'forms2db' ),
@@ -65,20 +51,11 @@ class Forms2db_Cpt {
             'not_found_in_trash'  => __( 'Not found in Trash', 'forms2db' ),
         );
         
-        // Set other options for Custom Post Type
-        
         $args = array(
             'label'               => __( 'forms', 'forms2db' ),
             'description'         => __( 'Form news and reviews', 'forms2db' ),
             'labels'              => $labels,
-            // Features this CPT supports in Post Editor
             'supports'            => array( 'title' ),
-            // You can associate this CPT with a taxonomy or custom taxonomy. 
-            'taxonomies'          => array( 'genres' ),
-            /* A hierarchical CPT is like Pages and can have
-            * Parent and child items. A non-hierarchical CPT
-            * is like Posts.
-            */ 
             'hierarchical'        => false,
             'public'              => false,
             'show_ui'             => true,
@@ -91,21 +68,22 @@ class Forms2db_Cpt {
             'exclude_from_search' => true,
             'publicly_queryable'  => true,
             'capability_type'     => 'post',
-            'rewrite' => false,
-            'show_in_rest' => false,
+            'rewrite'             => false,
+            'show_in_rest'        => false,
     
         );
         
-        // Registering your Custom Post Type
         register_post_type( 'forms2db-forms', $args );
     
     }
 
     /**
      * Add Metaboxes
+     * @since      1.0.0
      */
 
     public function metaboxes() {
+
         add_meta_box(
             'admin-message',      // Unique ID
             esc_html__( 'Admin message', 'forms2db' ),    // Title
@@ -132,12 +110,14 @@ class Forms2db_Cpt {
             'side',         // Context
         );
 
-
-
-
     }
 
-    public function form_shortcode_meta_box() {
+    /**
+     * Show the form shortcode 
+     * @since      1.0.0
+     */
+
+    public function form_shortcode() {
         echo sprintf('<div id="form2db-form-shortcode-conteiner">
             <strong>Shortcode: </strong><span id="form2db-form-shortcode" class="copyable">[forms2db-form id=%d]</span> <i class="fas fa-copy copier"></i>
             </div>', 
@@ -146,7 +126,13 @@ class Forms2db_Cpt {
         );
     }
 
-    public function form_fields() {    
+    /**
+     * Show the form content
+     * 
+     * @since      1.0.0
+     */
+
+    public function form_content() {    
         $fields = get_post_meta($this->form_id, '_forms2db_form', true);
         
         // Default values
@@ -160,20 +146,27 @@ class Forms2db_Cpt {
                     "attributes"  => "",
                 ),
                 "submit-text" => "Submit",
-            );
-            
+            );       
         }
         
         $submit_text = isset($fields['submit-text']) ? $fields['submit-text'] : __('Submit');
         
         ob_start();        
-        require('views/form-fields-metabox.php');
+        require('views/form-content.php');
         $fields = ob_get_contents();
         ob_clean();
         echo $fields;
     }
 
-    public function field_row($fields) { 
+    /**
+     * Add fields into form content. 
+     * Called from view admin/form-settings.php
+     * 
+     * @since      1.0.0
+     * @param      array    $fields       The arguments for fields.
+     */
+
+    public function field_rows($fields) { 
 
         if( !isset($fields) ) {
             $fields = [0 => ''];
@@ -192,6 +185,13 @@ class Forms2db_Cpt {
         }
     }
 
+    /**
+     * Handle options for select, checkbox and radio fields 
+     * 
+     * @since      1.0.0
+     * @param      array    $options       The options of the field/fields.
+     */
+
     public function option_array_to_text($options) {
         
         $option_text = '';
@@ -202,6 +202,13 @@ class Forms2db_Cpt {
         return $option_text;
 
     }
+
+    /**
+     * Save the form data: Fields and metaboxes
+     * 
+     * @since      1.0.0
+     * @param      array    $post_id       Id of the form.
+     */
 
     public function save_forms_data($post_id) {
 
@@ -298,6 +305,7 @@ class Forms2db_Cpt {
             /**
              * Save settings
              */
+
             if(isset( $_POST['modifyable'] ))
                 $settings['modifyable'] = (boolean) $_POST['modifyable'];
             
@@ -339,7 +347,8 @@ class Forms2db_Cpt {
     }
 
     /**
-     * metaboxes
+     * Metabox for admin message and admin message receiver
+     * @since      1.0.0
      */
 
     public function admin_message() {
@@ -353,12 +362,22 @@ class Forms2db_Cpt {
 
     }
 
+    /**
+     * Metabox for user message
+     * @since      1.0.0
+     */
+
     public function user_message() {
         global $post;
 
         $content = get_post_meta($post->ID, '_forms2db_user_message' , true );
         wp_editor( htmlspecialchars_decode($content), '_forms2db_user_message', array("media_buttons" => false) );
     }
+
+    /**
+     * Metabox for settings
+     * @since      1.0.0
+     */
 
     public function settings() {
 
@@ -370,23 +389,9 @@ class Forms2db_Cpt {
         );
 
         $settings = get_post_meta($post->ID, '_forms2db_settings', true );
+        
+        require('views/form-settings.php');
 
-        //$settings = array_merge($defauts, $settings );
-        ?>
-        <p>
-            <span><?php _e('Front end user can edit form content') ?></span><br/>
-            <input type="radio" name="modifyable" id="modifyable-true" value=1 <?php echo ($settings['modifyable'] == true ) ? 'checked' : '' ?> ><label for="modifyable-true"><?php _e('Yes') ?></label>
-            <input type="radio" name="modifyable" id="modifyable-false" value=0 <?php echo ($settings['modifyable'] == false ) ? 'checked' : '' ?> ><label for="modifyable-false"><?php _e('No') ?></label>
-        </p>
-        <p>
-            <span><?php _e('Confirmation required') ?></span><br/>
-            <input type="radio" name="confirmation-required" id="confirmation-required-true" value=1 <?php echo ($settings['confirmation-required'] == true ) ? 'checked' : '' ?> ><label for="confirmation-required-true"><?php _e('Yes') ?></label>
-            <input type="radio" name="confirmation-required" id="confirmation-required-false" value=0 <?php echo ($settings['confirmation-required'] == false ) ? 'checked' : '' ?> ><label for="confirmation-required-false"><?php _e('No') ?></label>
-        </p>
-        <?php 
     }
 
-
 }
-
-?>

@@ -73,13 +73,14 @@ class Forms2dbForm {
 		$post_id = $post->ID;
 		
 		do_action('before_form');
+
+		$form_values = $this->get_form_data();
+
         foreach($form_fields as $form_field) {
-			
-			// ADD VALUES FROM $_POST IF EXIST!!!
-			
+						
 			if( is_array( $form_field ) ) { ?>
 				<div class="forms2db-field-container <?php echo isset($form_field['container-classes']) ? esc_attr($form_field['container-classes']) : ''  ?>">
-					<?php echo $fields_obj->add_field($form_field); ?>
+					<?php echo $fields_obj->add_field($form_field, $value); ?>
 				</div>
 			<?php }
 		}
@@ -186,6 +187,44 @@ class Forms2dbForm {
 			$result = $wpdb->query($wpdb->prepare($sql, $data));
 			
 		}
+	}
+
+	public function get_form_data() {
+
+		global $wpdb;
+
+		if( is_user_logged_in() ) {
+			if(current_user_can( 'administrator' ) && isset($_GET['form-id'])) {
+				$where_data = array(
+					intval($_GET['form-id']),
+				);
+				$where_arg = 'id = %d';
+			} else {
+				// If no capability to view others data
+				$where_data = array(
+					get_current_user_id(),
+					$this->form_id,
+				);
+				$where_arg = 'user_id = %s && form_id = %s';
+			}
+
+		} elseif( isset($_GET['form-id']) && isset($_GET['form-key']) ){
+			$where_data = array(
+				intval($_GET['form-id']),
+				sanitize_text_field($_GET['form-key']),
+			);
+
+			$where_arg = 'id = %s && form_key = %d';
+		}
+
+		if(isset($where_arg) && isset($where_data)) {
+			$sql = "SELECT id, form_data FROM {$wpdb->prefix}forms2db_data WHERE {$where_arg};";
+			$results = $wpdb->get_results($wpdb->prepare($sql, $where_data));
+
+			return $results;
+
+		}
+		
 	}
 
 }
