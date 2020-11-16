@@ -71,6 +71,7 @@ class Forms2dbForm {
 				// GET VALUE FROM $form_values
 				$name = $form_field['name'];
 				$value = $form_values[$name];
+				$this->add_field_error($name);
 				?>
 				<div class="forms2db-field-container <?php echo isset($form_field['container-classes']) ? esc_attr($form_field['container-classes']) : ''  ?>">
 					<?php echo $fields_obj->add_field($form_field, $value); ?>
@@ -124,6 +125,15 @@ class Forms2dbForm {
 				);
 	
 				$where_arg = 'id = %s && form_key = %d';
+			} else {
+				global $forms2db_record_id;
+				if( isset($forms2db_record_id) ){
+					$where_data = array(
+						$forms2db_record_id,
+					);
+		
+					$where_arg = 'id = %s';
+				}
 			}
 		} 
 
@@ -137,11 +147,25 @@ class Forms2dbForm {
 		
 	}
 
-	public function show_errors() {
-		
-		global $forms2db_errors;
-		if( count($forms2db_errors->errors) > 0) {
-			// Display errors
+	public function show_notices() {
+
+		if(isset( $_POST['forms2db-form-user-action'] )) {
+			global $forms2db_errors;
+			if(isset($forms2db_errors) && count($forms2db_errors->errors) > 0) { ?>
+				<div class="forms2db-error"><?php _e('Please check the form for errors', 'forms2db') ?></div>
+			<?php } else { ?>
+				<div class="forms2db-success"><?php _e('The form has been successfully submitted!', 'forms2db') ?></div>
+			<?php }
 		}
+		
+	}
+
+	public function add_field_error($name) {
+		if(isset( $_POST['forms2db-form-user-action'] )) {
+			global $forms2db_errors;
+			$message = $forms2db_errors->get_error_messages($name);
+			if( isset($message[0]) ) ?>
+				<div class="forms2db-error"><?php echo $message[0]; ?></div>
+		<?php }
 	}
 }

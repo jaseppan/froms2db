@@ -175,7 +175,11 @@ class Forms2db_Public {
 			}
 
 			$result = $wpdb->query($wpdb->prepare($sql, $data));
-			
+
+			if( $result == true ) {
+				global $forms2db_record_id;
+				$forms2db_record_id = $wpdb->insert_id;
+			}			
 		}
 	}
 
