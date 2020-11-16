@@ -49,3 +49,13 @@ function forms2db_form($args) {
 }
 
 add_shortcode( 'forms2db-form', 'forms2db_form' );
+
+function forms2db_validate($type, $value, $attributes) {
+    // Text
+
+    // Number
+
+    // Email
+
+    return $value;
+}

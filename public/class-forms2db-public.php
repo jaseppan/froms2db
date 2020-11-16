@@ -51,6 +51,7 @@ class Forms2db_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		add_action('init', array($this, 'save_form'));
 	
 	}
 
@@ -74,6 +75,108 @@ class Forms2db_Public {
 
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/forms2db-public.js', array( 'jquery' ), $this->version, false );
 
+	}
+
+	/**
+	 * Save form data
+	 *
+	 * @since    1.0.0
+	 * @access   public
+	 */  
+	public function save_form() {
+		if( isset($_POST['forms2db-form-user-action']) && $_POST['forms2db-form-user-action'] == 'saveform' ) {
+			
+			global $forms2db_errors;
+			$forms2db_errors = new WP_Error();
+
+			if(is_numeric($_POST['forms2db-form-id'])) {
+				$form_id = $_POST['forms2db-form-id'];
+				$form_fields = get_post_meta($form_id, '_forms2db_form', true);
+				$form_settings = get_post_meta($form_id, '_forms2db_settings', true); // ADD HERE "MODIFYABLE" "CONFIRM_REQUIRED"
+			} else {
+				$forms2db_errors->add( 'form2db-errors', __('Invalid form id'), 'invalid_form_id' );
+			}
+
+			
+			if(is_numeric($_POST['forms2db-post-id'])) {
+				$post_id = $_POST['forms2db-post-id'];
+			} else {
+				$forms2db_errors->add( 'form2db-errors', __('Invalid post id'), 'invalid_post_id' );
+			}
+			
+			if(!wp_verify_nonce( $_POST['forms2db-nonce'], esc_attr($form_fields['nonce']) )) {
+				$forms2db_errors->add( 'form2db-errors', __('Invalid nonce'), 'invalid_nonce' );
+			}
+			
+			$form_data_array = [];
+
+			if( isset($form_fields) ) {
+				foreach( $form_fields as $form_field ) {
+					if(isset($form_field['name'])) {
+						// Add Validation !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+						// $value = forms2db_validate( $_POST[$name], $form_field['type'], $form_field['attributes'] );
+						$name = esc_attr($form_field['name']);
+						$value = sanitize_text_field( $_POST[$name] );
+						if(!empty($value)) {
+							$form_data_array[$name] = $value;
+						}
+					}
+				}
+			}
+
+
+			if(empty($form_data_array)) {
+				$forms2db_errors->add( 'form2db-errors', __('Empty form'), 'missing_data' );
+			}
+
+			
+			if( count( $forms2db_errors->get_error_messages() ) > 0 ) {
+				return;
+			}
+
+			
+			$form_data = json_encode($form_data_array);
+			
+			global $wpdb;
+
+			// ADD USER IF THE FORM IS MODIFYABLE AND USER IS LOGGED IN OR IF FORM_ID EXIST
+ 			if( is_user_logged_in() ) {
+				$user_id = get_current_user_id();
+				$ids = array(
+					$form_id,
+					$post_id,
+					$user_id,
+				);
+				$sql = "SELECT id FROM {$wpdb->prefix}forms2db_data WHERE form_id = %d && post_id = %d && user_id = %d";
+				$results = $wpdb->get_results($wpdb->prepare($sql, $ids));
+				$user_data_id = $results[0]->id;
+			} else {
+				$user_id = NULL;
+			}
+
+			if(isset($user_data_id)) {
+				$data = array(
+					'form_data' 	=> $form_data,
+					'id'			=> $user_data_id
+				);
+				
+				$sql = "UPDATE {$wpdb->prefix}forms2db_data SET form_data = %s WHERE id = %d";
+			
+			} else {
+				$data = array(
+					'post_id' 	=>  $post_id,
+					'form_id' 	=>  $form_id,
+					'user_id' 	=>  $user_id,
+					'form_data' =>  $form_data,
+				);
+
+				$sql = "INSERT INTO {$wpdb->prefix}forms2db_data (post_id, form_id, user_id, form_data) VALUES (%d, %d, %d, %s)";
+
+			}
+
+			$result = $wpdb->query($wpdb->prepare($sql, $data));
+			
+		}
 	}
 
 }
