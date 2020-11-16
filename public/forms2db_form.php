@@ -1,7 +1,7 @@
 <?php
 
 /**
- * The public form
+ * The public form called by forms2db_form function.
  *
  * @package    Forms2db
  * @subpackage Forms2db/public
@@ -99,8 +99,9 @@ class Forms2dbForm {
 	public function get_form_data($cells = 'form_data') {
 
 		global $wpdb;
+		global $forms2db_record_id;
 
-		if(current_user_can( 'administrator' ) && isset($_GET['form-id'])) {
+		if(current_user_can( 'edit_posts' ) && isset($_GET['form-id'])) {
 			$where_data = array(
 				intval($_GET['form-id']),
 			);
@@ -108,8 +109,19 @@ class Forms2dbForm {
 		} else {
 			$form_settings = get_post_meta($this->form_id, '_forms2db_settings', true);
 			$modifyable = $form_settings['modifyable'];
+			
+			// If form is modifyable show only just inserted values
 			if($modifyable == false) {
-				return;
+				if( isset($forms2db_record_id) ){
+					$where_data = array(
+						$forms2db_record_id,
+					);
+		
+					$where_arg = 'id = %s';
+				} else {
+					return;
+				}
+			// If logged in show values saved by current user
 			} elseif( is_user_logged_in() ) {
 				// If no capability to view others data
 				$where_data = array(
@@ -117,7 +129,7 @@ class Forms2dbForm {
 					$this->form_id,
 				);
 				$where_arg = 'user_id = %s && form_id = %s';
-	
+			// Get values by secret link	
 			} elseif( isset($_GET['form-id']) && isset($_GET['form-key']) ){
 				$where_data = array(
 					intval($_GET['form-id']),
@@ -125,8 +137,8 @@ class Forms2dbForm {
 				);
 	
 				$where_arg = 'id = %s && form_key = %d';
+			// Get just inserted values
 			} else {
-				global $forms2db_record_id;
 				if( isset($forms2db_record_id) ){
 					$where_data = array(
 						$forms2db_record_id,
@@ -147,6 +159,13 @@ class Forms2dbForm {
 		
 	}
 
+	/**
+	 * Add notice before form
+	 * 
+	 * @since    1.0.0
+	 * @access   public
+	 */
+
 	public function show_notices() {
 
 		if(isset( $_POST['forms2db-form-user-action'] )) {
@@ -159,6 +178,13 @@ class Forms2dbForm {
 		}
 		
 	}
+
+	/**
+	 * Add error messages before fields
+	 * 
+	 * @since    1.0.0
+	 * @access   public
+	 */
 
 	public function add_field_error($name) {
 		if(isset( $_POST['forms2db-form-user-action'] )) {
