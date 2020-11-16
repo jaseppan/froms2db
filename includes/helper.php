@@ -50,12 +50,78 @@ function forms2db_form($args) {
 
 add_shortcode( 'forms2db-form', 'forms2db_form' );
 
-function forms2db_validate($type, $value, $attributes) {
-    // Text
+function forms2db_validate($value, $type, $attributes, $label, $name, $options ) {
 
-    // Number
+    global $forms2db_errors;
 
-    // Email
+    $label = isset($label) ? $label : __('Field');
+
+    if(strpos($attributes, "require")) {
+        $is_required = true;
+    } else {
+        $is_required = false;
+    }
+
+    if( $is_required && is_empty($value) ) {
+        $message = sprintf(__('%s is required'), $label);
+        $forms2db_errors->add( 'form2db-field-errors', $message, $name );
+    } else {
+        $texts = array(
+            'input',
+            'textarea'
+        );
+        $choices = array(
+            'checkbox',
+            'radio',
+            'select'
+        );
+
+        // Text
+        switch( $type ) {
+            case in_array($type, $texts):
+                $value = sanitize_text_field( $value );
+                
+                break;
+            case in_array($type, $choices):
+                $option_values = array_map( function( $option ) {
+                    return $option['value'];
+                }, $options );
+
+                if(in_array($value, $option_values)) {
+                    $value = $value;
+                } else {
+                    $value = '';
+                    $forms2db_errors->add( $name, __('Invalid value ').$value);
+                }
+                break;
+            case 'number':
+                
+                if(is_numeric($value)) {
+                    $value = $value;
+                } else {
+                    $value = '';
+                    $forms2db_errors->add( $name, __('Invalid value') . '. ' . __('Please insert numeric value') , $name);
+                }
+                break;
+            case 'date':
+                if(strtotime($value)) {
+                    $value = $value;
+                } else {
+                    $value = '';
+                    $forms2db_errors->add( $name, __('Invalid date'));
+                }
+                break;
+            case 'email':
+                if(is_email($value)) {
+                    $value = $value;
+                } else {
+                    $value = '';
+                    $forms2db_errors->add( $name, __('Invalid email'));
+                }
+                break;
+        }
+
+    }    
 
     return $value;
 }

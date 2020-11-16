@@ -110,13 +110,13 @@ class Forms2db_Public {
 			
 			$form_data_array = [];
 
+			
 			if( isset($form_fields) ) {
 				foreach( $form_fields as $form_field ) {
 					if(isset($form_field['name'])) {
-						// Add Validation !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-						// $value = forms2db_validate( $_POST[$name], $form_field['type'], $form_field['attributes'] );
 						$name = esc_attr($form_field['name']);
-						$value = sanitize_text_field( $_POST[$name] );
+						$options = isset($form_field['options']) ? $form_field['options'] : [];
+						$value = forms2db_validate( $_POST[$name], $form_field['field-type'], $form_field['attributes'], $form_field['label'], $form_field['name'], $options );
 						if(!empty($value)) {
 							$form_data_array[$name] = $value;
 						}

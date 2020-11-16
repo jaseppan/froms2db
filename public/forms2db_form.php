@@ -140,8 +140,8 @@ class Forms2dbForm {
 	public function show_errors() {
 		
 		global $forms2db_errors;
-		var_dump($forms2db_errors);
-
+		if( count($forms2db_errors->errors) > 0) {
+			// Display errors
+		}
 	}
-
 }
