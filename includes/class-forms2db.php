@@ -131,6 +131,11 @@ class Forms2db {
 		 * The class responsible for registering forms post type
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-forms2db-cpt.php';
+		
+		/**
+		 * The class responsible for managing data saved by forms
+		 */
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'admin/class-forms2db-form-data.php';
 
 		/**
 		 * The class responsible for defining all actions that occur in the public-facing
@@ -178,6 +183,7 @@ class Forms2db {
 
 		$plugin_admin = new Forms2db_Admin( $this->get_plugin_name(), $this->get_version() );
 		$plugin_cpt = new Forms2db_Cpt();
+		$plugin_form_data = new Forms2dbFormData();
 
 	}
 

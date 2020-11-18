@@ -1,0 +1,1 @@
+<h1><?php _e('Saved data', 'forms2db') ?></h1>
