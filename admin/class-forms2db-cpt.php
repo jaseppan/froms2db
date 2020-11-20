@@ -293,10 +293,17 @@ class Forms2db_Cpt {
             }
     
             if( empty($errors) ) {
-                
+
+                $form_structure = array_map( function($field) {
+                    return array(
+                        'name' => $field['name'],
+                        'label' => $field['label'],
+                    );
+                },  $fields );
                 $fields['submit-text'] = sanitize_text_field( $_POST['submit-text'] );
                 $fields['nonce'] = wp_generate_password();
                 update_post_meta( $post_id, '_forms2db_form', $fields );
+                update_post_meta( $post_id, '_forms2db_form_structure', $form_structure );
     
             } else {
                 // Handle errors
