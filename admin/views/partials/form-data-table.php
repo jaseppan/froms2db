@@ -23,3 +23,8 @@
         <?php } ?>
     </tbody>
 </table>
+<script>
+    jQuery('.forms2db-data-table-delete-item').click(function() {
+        return confirm('<?php _e('Are you sure') ?>');
+    });
+</script>

@@ -24,6 +24,7 @@ class Forms2dbFormData {
         $this->current_form_data = $this->current_form_data();
         
         add_action('admin_menu', array($this, 'add_form_data_page'));
+        add_action( 'admin_init', array($this, 'delete_data'));
         
     }
 
@@ -107,13 +108,10 @@ class Forms2dbFormData {
 
         if(isset( $_GET['item'] ) && is_numeric($_GET['item'])) {
 
-            switch($_GET['action']) {
-                case 'edit' :
-                    require('views/form-data-editor.php');
-                    break;
-                case 'delete' :
-
-                    break;
+            if(isset($_GET['action']) && $_GET['action'] == 'edit') {
+                
+                require('views/form-data-editor.php');
+               
             }
 
         } else {
@@ -131,6 +129,8 @@ class Forms2dbFormData {
         } elseif ( count($this->available_forms) == 1 ) {
             $this->form_id =  $this->available_forms[0]->ID;
             return;
+        } elseif ( isset($_GET['form-id']) && is_numeric($_GET['form-id']) ) {
+            $this->form_id = $_GET['form-id'];
         }
 
         require('views/partials/form-selector.php');    
@@ -140,7 +140,7 @@ class Forms2dbFormData {
 
     }
 
-    public function form_data_table_link( $additional_args ) {
+    public function form_data_table_link( $additional_args = array() ) {
         $base_link_query_args = array(
             'post_type'     => 'forms2db-forms',
             'page'          => 'forms2db-save-data',
@@ -157,6 +157,17 @@ class Forms2dbFormData {
             require('views/partials/form-data-table.php');
         }
 
+    }
+
+    public function delete_data() {
+        if(isset($_GET['action']) && $_GET['action'] == 'delete' && isset( $_GET['item'] ) && is_numeric($_GET['item'])) {
+            if(current_user_can('edit_posts')) {
+                global $wpdb;
+                $wpdb->delete( $wpdb->prefix . 'forms2db_data', array('id' => $_GET['item']));
+                wp_safe_redirect( $this->form_data_table_link() );
+                exit();
+            }
+        }
     }
 
     public function csv_export() {
