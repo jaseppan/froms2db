@@ -21,7 +21,7 @@ class Forms2dbFormData {
 	public function __construct() {
         
         $this->available_forms = $this->available_forms();
-        $this->current_form = $this->current_form();
+        $this->current_form_data = $this->current_form_data();
         
         add_action('admin_menu', array($this, 'add_form_data_page'));
         
@@ -41,7 +41,8 @@ class Forms2dbFormData {
 
     }
 
-    public function current_form() {
+    public function current_form_data() {
+        
         global $wpdb;
 
         if( isset($this->form_id) ) {
@@ -52,20 +53,36 @@ class Forms2dbFormData {
             return null;
         }
 
-        $sql = "SELECT form_data FROM {$wpdb->prefix}forms2db_data";
+        $sql = "SELECT id, form_data FROM {$wpdb->prefix}forms2db_data";
+        if(isset($_GET['s'])) {
+            $sql .= " WHERE form_data LIKE '%" . $_GET['s'] . "%'";
+        }
+        
+        /*if(isset($_GET['order-by'])) {
+            $sql = "ORDER BY %s";
+            $args[] = $_GET['order-by'];
+        } else {
+            $sql = "ORDER BY %s";
+        }
+
+        if(isset($_GET['order'])) {
+            $sql = "ORDER BY %s";
+            $args[] = $_GET['order-by'];
+        }*/
+
         $results = $wpdb->get_results($wpdb->prepare($sql), ARRAY_A);
+
         $form_data = array_map(function( $row ) {
-            return json_decode($row['form_data'], ARRAY_A);
+            return array('id' => $row['id'], 'data' => json_decode($row['form_data'], ARRAY_A));
         }, $results );
 
-        $form['structure'] = get_post_meta($form_id, '_forms2db_form_structure', false);
+        $form_structure = get_post_meta($form_id, '_forms2db_form_structure', false);
+        $form['structure'] = $form_structure[0];
         $form['data'] = $form_data;
         return $form;
 
     }
     
-
-
     public function add_form_data_page() {
         add_submenu_page( 
             'edit.php?post_type=forms2db-forms',
@@ -93,44 +110,33 @@ class Forms2dbFormData {
             return;
         }
 
-        ?>
-        <form action="<?php echo admin_url('edit.php'); ?>" method="get">
-            <input type="hidden" name="post_type" value="forms2db-forms"/><br />
-            <input type="hidden" name="page" value="forms2db-save-data"/>
-            <label for="forms2db-selector"><?php _e('Select form', 'forms2db') ?></label>
-            <select name="form-id" id="forms2db-selector">
-                <?php foreach($this->available_forms as $form) { ?>
-                <option value="<?php echo $form->ID ?>"><?php echo $form->post_title ?></option>     
-                <?php } ?>
-            </select>
-            <input type="submit" name="submit-forms2db-selector" value="<?php _e('Submit', 'forms2db') ?>" id="submit-forms2db-selector">
-        </form>
-    <?php }
+        require('views/partials/form-selector.php');    
+    }
 
     public function search_field() {
 
     }
 
+    public function form_data_table_link( $additional_args ) {
+        $base_link_query_args = array(
+            'post_type'     => 'forms2db-forms',
+            'page'          => 'forms2db-save-data',
+            'form-id'       => intval($_GET['form-id']),
+        );
+
+        $args = array_merge($base_link_query_args, $additional_args);
+        $link = add_query_arg( $order_link_query_args, $args, admin_url('edit.php') );
+        return $link;
+    }
+
     public function data_content() {
-        echo "<pre>";
-        var_dump ($this->current_form);
-        echo "</pre>";
+
+        require('views/partials/form-data-table.php');
 
     }
 
     public function csv_export() {
 
     }
-
-    public function get_form_data($cols) {
-        global $wpdb;
-
-        $sql = "SELECT {$cols} FROM {$wpdb->prefix}";
-        
-    }
-
-
-
-
 
 }
