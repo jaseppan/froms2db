@@ -1,0 +1,1 @@
+<?php var_dump($this->current_form_data) ?>

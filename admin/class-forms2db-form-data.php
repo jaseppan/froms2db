@@ -53,9 +53,13 @@ class Forms2dbFormData {
             return null;
         }
 
-        $sql = "SELECT id, form_data FROM {$wpdb->prefix}forms2db_data";
+        
+
+        $sql = "SELECT id, form_data FROM {$wpdb->prefix}forms2db_data WHERE form_id = {$form_id}";
         if(isset($_GET['s'])) {
-            $sql .= " WHERE form_data LIKE '%" . $_GET['s'] . "%'";
+            $sql .= " && form_data LIKE '%" . $_GET['s'] . "%'";
+        } elseif( isset($_GET['item']) && is_numeric($_GET['item']) ) {
+            $sql .= " && id = " . $_GET['item'];
         }
         
         /*if(isset($_GET['order-by'])) {
@@ -70,6 +74,7 @@ class Forms2dbFormData {
             $args[] = $_GET['order-by'];
         }*/
 
+        
         $results = $wpdb->get_results($wpdb->prepare($sql), ARRAY_A);
 
         $form_data = array_map(function( $row ) {
@@ -97,7 +102,25 @@ class Forms2dbFormData {
     }
 
     public function data_page_content() { 
-        require('views/form-data-manager.php');    
+        
+        require('views/form-data-manager-header.php'); 
+
+        if(isset( $_GET['item'] ) && is_numeric($_GET['item'])) {
+
+            switch($_GET['action']) {
+                case 'edit' :
+                    require('views/form-data-editor.php');
+                    break;
+                case 'delete' :
+
+                    break;
+            }
+
+        } else {
+            require('views/form-data-manager.php');    
+        }
+        
+        
     }
 
     public function form_selector() { 
@@ -130,8 +153,9 @@ class Forms2dbFormData {
     }
 
     public function data_content() {
-
-        require('views/partials/form-data-table.php');
+        if(!empty($this->current_form_data['data'])) {
+            require('views/partials/form-data-table.php');
+        }
 
     }
 
