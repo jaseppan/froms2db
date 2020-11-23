@@ -100,24 +100,37 @@ class Forms2dbFormData {
             'dashicons-groups' 
     
         );
+
+        
     }
 
     public function data_page_content() { 
-        
-        require('views/form-data-manager-header.php'); 
 
-        if(isset( $_GET['item'] ) && is_numeric($_GET['item'])) {
+        ?>
+        <div class="wrap">
+            <?php
+            require('views/form-data-manager-header.php'); 
 
-            if(isset($_GET['action']) && $_GET['action'] == 'edit') {
+            if(isset( $_GET['item'] ) && is_numeric($_GET['item'])) {
+
+                if(isset($_GET['action']) && $_GET['action'] == 'edit') {
+                    
+                    require('views/form-data-editor.php');
                 
-                require('views/form-data-editor.php');
-               
-            }
+                }
 
-        } else {
-            require('views/form-data-manager.php');    
-        }
-        
+            } else {
+
+                $this->form_selector();
+                /**
+		         * The class responsible for managing data saved by forms
+		         */
+		        require_once 'class-forms2db-form-data-table.php';        
+              
+            }
+            ?>
+        </div>
+        <?php         
         
     }
 
@@ -148,7 +161,7 @@ class Forms2dbFormData {
         );
 
         $args = array_merge($base_link_query_args, $additional_args);
-        $link = add_query_arg( $order_link_query_args, $args, admin_url('edit.php') );
+        $link = add_query_arg( $order_link_query_args, admin_url('edit.php') );
         return $link;
     }
 

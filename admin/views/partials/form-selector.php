@@ -8,5 +8,5 @@
         <option value="<?php echo $form->ID ?>" <?php echo ($this->form_id == $form->ID) ? 'selected' : ''  ?>><?php echo $form->post_title ?></option>     
         <?php } ?>
     </select>
-    <input type="submit" name="submit-forms2db-selector" value="<?php _e('Submit', 'forms2db') ?>" id="submit-forms2db-selector">
+    <input type="submit" name="submit-forms2db-selector" value="<?php _e('Submit', 'forms2db') ?>" id="submit-forms2db-selector" class="button">
 </form>
