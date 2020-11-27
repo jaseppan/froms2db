@@ -19,7 +19,8 @@ class Forms2db_Cpt {
 	 * @param      string    $version    The version of this plugin.
 	 */
 	public function __construct() {
-        $this->form_id = intval($_GET['post']);
+
+        $this->form_id = isset($_GET['post']) ? intval($_GET['post']) : null;
         
         add_action( 'init', array($this, 'add_post_type') );
         add_action( 'save_post_forms2db-forms', array($this, 'save_forms_data') );

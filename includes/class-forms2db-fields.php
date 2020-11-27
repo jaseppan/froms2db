@@ -41,7 +41,7 @@ class Forms2DbFields {
 
         $ərgs = array_merge($defaults, $args);
 
-        if(isset($_POST[$name])) {
+        if(isset($name) && isset($_POST[$name])) {
             $args['value'] = $_POST[$name];
         } elseif(!empty($value)) {
             $args['value'] = $value;
@@ -55,6 +55,7 @@ class Forms2DbFields {
         $checkboxes = ['checkbox', 'radio', 'select'];    
         
         // Add label
+
         $field = isset( $args['label'] ) ? sprintf( '<label for="%s" class="froms2db-main-label">%s</label>', $args['id'], $args['label'] ) : '';
         switch ($args['field-type']) {
             case "select" :

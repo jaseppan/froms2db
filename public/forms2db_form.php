@@ -65,18 +65,22 @@ class Forms2dbForm {
 
 		$form_values = $this->get_form_data(); // 
 
-        foreach($form_fields as $form_field) {
+        foreach($form_fields as $id => $form_field) {
 						
 			if( is_array( $form_field ) ) { 
 				// GET VALUE FROM $form_values
-				$name = $form_field['name'];
-				$value = $form_values[$name];
-				$this->add_field_error($name);
-				?>
-				<div class="forms2db-field-container <?php echo isset($form_field['container-classes']) ? esc_attr($form_field['container-classes']) : ''  ?>">
-					<?php echo $fields_obj->add_field($form_field, $value); ?>
-				</div>
-			<?php }
+				if( isset($form_field['name']) ) {
+					$name = esc_attr( $form_field['name'] );
+					$value = isset($form_values[$name]) ? esc_attr( $form_values[$name] ) : '';
+					$form_field['id'] = $id;
+					$this->add_field_error($name);
+					?>
+						<div class="forms2db-field-container <?php echo isset($form_field['container-classes']) ? esc_attr($form_field['container-classes']) : ''  ?>">
+							<?php echo $fields_obj->add_field($form_field, $value); ?>
+						</div>
+					<?php 
+				}
+			}
 		}
 
 		wp_nonce_field( esc_attr($form_fields['nonce']), 'forms2db-nonce' );

@@ -13,14 +13,14 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 	require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 }
 
-class Saved_data_List extends WP_List_Table {
+class Saved_Data_List extends WP_List_Table {
 
 	/** Class constructor */
 	public function __construct() {
 
 		parent::__construct( [
-			'singular' => __( 'Customer', 'sp' ), //singular name of the listed records
-			'plural'   => __( 'Saved_data', 'sp' ), //plural name of the listed records
+			'singular' => __( 'Saved data', 'forms2db' ), //singular name of the listed records
+			'plural'   => __( 'Saved data', 'forms2db' ), //plural name of the listed records
 			'ajax'     => false //does this table support ajax?
 		] );
 
@@ -285,6 +285,7 @@ class SP_Plugin {
 	public function __construct() {
 		add_filter( 'set-screen-option', [ __CLASS__, 'set_screen' ], 10, 3 );
 		add_action( 'admin_menu', [ $this, 'saved_data_menu' ] );
+		$this->available_forms = $this->available_forms();
 	}
 
 
@@ -318,15 +319,18 @@ class SP_Plugin {
 			<h2>Saved data</h2>
 
 			<div id="poststuff">
-				<div id="post-body" class="metabox-holder columns-2">
+				<div id="post-body" class="metabox-holder">
 					<div id="post-body-content">
-						<div class="meta-box-sortables ui-sortable">
-							<form method="post">
-								<?php
-								$this->saved_data_obj->prepare_items();
-								$this->saved_data_obj->display(); ?>
-							</form>
-						</div>
+						<?php $this->form_selector(); ?>
+						<?php if(isset($_GET['form-id'])) { ?>
+							<div class="meta-box-sortables ui-sortable">
+								<form method="post">
+									<?php
+									$this->saved_data_obj->prepare_items();
+									$this->saved_data_obj->display(); ?>
+								</form>
+							</div>
+						<?php } ?>
 					</div>
 				</div>
 				<br class="clear">
@@ -349,8 +353,37 @@ class SP_Plugin {
 
 		add_screen_option( $option, $args );
 
-		$this->saved_data_obj = new Saved_data_List();
+		$this->saved_data_obj = new Saved_Data_List();
 	}
+
+	public function form_selector() { 
+        
+        if(count($this->available_forms) == 0) {
+            _e("No forms created", "forms2db");
+            return;
+        } elseif ( count($this->available_forms) == 1 ) {
+            $this->form_id =  $this->available_forms[0]->ID;
+            return;
+        } elseif ( isset($_GET['form-id']) && is_numeric($_GET['form-id']) ) {
+            $this->form_id = $_GET['form-id'];
+        }
+
+        require('views/partials/form-selector.php');    
+	}
+	
+	public function available_forms() {
+
+        $args = array(
+            'post_type'=> 'forms2db-forms',
+            'orderby'    => 'ID',
+            'post_status' => 'publish',
+            'order'    => 'DESC',
+            'posts_per_page' => -1 // this will retrive all the post that is published 
+        );
+        
+        return get_posts($args);
+
+    }
 
 
 	/** Singleton instance */
@@ -361,5 +394,7 @@ class SP_Plugin {
 
 		return self::$instance;
 	}
+
+
 
 }
