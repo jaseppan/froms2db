@@ -273,7 +273,7 @@ class Saved_Data_List extends WP_List_Table {
 }
 
 
-class SP_Plugin {
+class Forms2db_Saved_Data_Page {
 
 	// class instance
 	static $instance;
