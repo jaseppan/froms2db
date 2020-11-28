@@ -51,6 +51,7 @@ class Forms2db_Public {
 
 		$this->plugin_name = $plugin_name;
 		$this->version = $version;
+		add_filter( 'single_template', array($this, 'load_forms2db_template') );
 		add_action('init', array($this, 'save_form'));
 	
 	}
@@ -203,5 +204,24 @@ class Forms2db_Public {
 			}
 		}
 	}
+
+	function load_forms2db_template( $template ) {
+		
+		global $post;
+		
+        if ( $post->post_type == 'forms2db-forms'  && !locate_template( array( 'single-forms2db-forms.php' ) ) ) {
+			//exit(var_dump(plugin_dir_path( __FILE__ ) . 'views/single-forms2db-forms.php') );
+            /*
+            * This is a 'forms2db' post
+            * AND a 'single forms2db template' is not found on
+            * theme or child theme directories, so load it
+            * from our plugin directory.
+            */
+            return plugin_dir_path( __FILE__ ) . 'views/single-forms2db-forms.php';
+        }
+
+        return $template;
+
+    }
 
 }

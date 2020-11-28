@@ -17,10 +17,14 @@ jQuery( document ).ready(function($) {
 	});
 
 	$(document).on('click', '.forms2db-field-delete span', function() {
-		var r = confirm("Are sure!");
-		if (r == true) {
-			$(this).closest('.forms2db-field-container').remove();
-		} 
+		if( $('.forms2db-field-container').length > 1 ) {
+			var r = confirm("Are sure!");
+			if (r == true) {
+				$(this).closest('.forms2db-field-container').remove();
+			} 
+		} else {
+			alert('You can not delete the last field.')
+		}
 	});
 
 	$(document).on('change', '.type', function() {
