@@ -348,6 +348,10 @@ class Forms2db_Cpt {
             }
 
             // ADD: _forms2db_admin_email_subject
+            if(isset( $_POST["forms2db-admin-email-subject"] )) {
+                $forms2db_admin_email_subject = sanitize_text_field($_POST["forms2db-admin-email-subject"]);
+                update_post_meta( $post_id, '_forms2db_admin_email_subject',  $forms2db_admin_email_subject );
+            }
             
             /**
              * Save user message
@@ -357,10 +361,16 @@ class Forms2db_Cpt {
                 $forms2db_user_message = sanitize_post($_POST["_forms2db_user_message"]);
                 update_post_meta( $post_id, '_forms2db_user_message',  $forms2db_user_message );
             }
+
+            if(isset( $_POST["forms2db-user-email-subject"] )) {
+                $forms2db_user_email_subject = sanitize_text_field($_POST["forms2db-user-email-subject"]);
+                update_post_meta( $post_id, '_forms2db_user_email_subject',  $forms2db_user_email_subject );
+            }
             
-            // ADD: _forms2db_user_email_subject
-            
-            // ADD: _forms2db_user_email_address_field
+            if(isset( $_POST["forms2db-user-email-address-field"] )) {
+                $forms2db_user_email_address_field = sanitize_text_field($_POST["forms2db-user-email-address-field"]);
+                update_post_meta( $post_id, '_forms2db_user_email_address_field',  $forms2db_user_email_address_field );
+            }
 
         }
     }
@@ -375,7 +385,7 @@ class Forms2db_Cpt {
 
         $content = get_post_meta($post->ID, '_forms2db_admin_message' , true );
         $receivers = get_post_meta($post->ID, '_forms2db_admin_emails' , true ) ? get_post_meta($post->ID, '_forms2db_admin_emails' , true ) : get_option( 'admin_email' );
-        $subject = get_post_meta( $form_id, '_forms2db_admin_email_subject',  true );
+        $subject = get_post_meta( $post->ID, '_forms2db_admin_email_subject',  true );
 
         echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-admin-emails' value='%s'><br />", __('Receiver emails', 'forms2db'), $receivers );
         echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-admin-email-subject' value='%s'><br />", __('Message subject', 'forms2db'), $subject );
@@ -393,8 +403,10 @@ class Forms2db_Cpt {
         global $post;
 
         $content = get_post_meta($post->ID, '_forms2db_user_message' , true );
-        $subject = get_post_meta( $form_id, '_forms2db_user_email_subject',  true );
+        $subject = get_post_meta( $post->ID, '_forms2db_user_email_subject',  true );
+        $user_email_field = get_post_meta($post->ID, '_forms2db_user_email_address_field',  true );
         echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-user-email-subject' value='%s'><br />", __('Message subject', 'forms2db'), $subject );
+        echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-user-email-address-field' value='%s'><br />", __('Get email from field', 'forms2db'), $user_email_field );
         wp_editor( htmlspecialchars_decode($content), '_forms2db_user_message', array("media_buttons" => false) );
     }
 
