@@ -15,6 +15,8 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 
 class Saved_Data_List extends WP_List_Table {
 
+	private $form_structure;
+
 	/** Class constructor */
 	public function __construct() {
 
@@ -23,6 +25,8 @@ class Saved_Data_List extends WP_List_Table {
 			'plural'   => __( 'Saved data', 'forms2db' ), //plural name of the listed records
 			'ajax'     => false //does this table support ajax?
 		] );
+
+		$this->form_structure = $this->get_form_structure();
 
 	}
 
@@ -52,9 +56,6 @@ class Saved_Data_List extends WP_List_Table {
 
         $results = $wpdb->get_results( $sql, ARRAY_A );
 
-        //$form_data = array_map(function( $row ) {
-        //    return array('id' => $row['id'], 'data' => json_decode($row['form_data'], ARRAY_A));
-        //}, $result );
         $keys = [];
         $data = [];
 
@@ -62,10 +63,9 @@ class Saved_Data_List extends WP_List_Table {
             $tmp_data = json_decode($row['form_data'], ARRAY_A);
             $keys = array_merge($keys, array_keys($tmp_data));
             $data[$key]['ID'] = $row['id'];
-            $data[$key] = array_merge($data[$key], $tmp_data);
-        }
-        
-        var_dump($data);
+			$data[$key] = array_merge($data[$key], $tmp_data);
+			$data[$key]['datetime'] = $row['datetime'];
+		}
 
 		return $data;
 	}
@@ -80,8 +80,8 @@ class Saved_Data_List extends WP_List_Table {
 		global $wpdb;
 
 		$wpdb->delete(
-			"{$wpdb->prefix}saved_data",
-			[ 'ID' => $id ],
+			"{$wpdb->prefix}forms2db_data",
+			[ 'id' => $id ],
 			[ '%d' ]
 		);
 	}
@@ -103,7 +103,7 @@ class Saved_Data_List extends WP_List_Table {
 
 	/** Text displayed when no customer data is available */
 	public function no_items() {
-		_e( 'No saved_data avaliable.', 'sp' );
+		_e( 'No saved_data avaliable.', 'forms2db' );
 	}
 
 
@@ -116,14 +116,9 @@ class Saved_Data_List extends WP_List_Table {
 	 * @return mixed
 	 */
 	public function column_default( $item, $column_name ) {
-		switch ( $column_name ) {
-			case 'eka':
-			case 'lisatty':
-			case 'field-type':
-				return $item[ $column_name ];
-			default:
-				return print_r( $item, true ); //Show the whole array for troubleshooting purposes
-		}
+
+		return $item[ $column_name ];
+
 	}
 
 	/**
@@ -149,9 +144,11 @@ class Saved_Data_List extends WP_List_Table {
 	 */
 	function column_name( $item ) {
 
+		$item_name = $this->form_structure[0]['name'];
+
 		$delete_nonce = wp_create_nonce( 'sp_delete_customer' );
 
-		$title = '<strong>' . $item['eka'] . '</strong>';
+		$title = '<strong>' . $item[$item_name] . '</strong>';
 
 		$actions = [
 			'delete' => sprintf( '<a href="?page=%s&action=%s&customer=%s&_wpnonce=%s">Delete</a>', esc_attr( $_REQUEST['page'] ), 'delete', absint( $item['ID'] ), $delete_nonce )
@@ -167,12 +164,15 @@ class Saved_Data_List extends WP_List_Table {
 	 * @return array
 	 */
 	function get_columns() {
-		$columns = [
-			'cb'      => '<input type="checkbox" />',
-			'eka'    => __( 'Name', 'sp' ),
-			'lisatty' => __( 'Address', 'sp' ),
-			'field-type'    => __( 'City', 'sp' )
-		];
+
+
+		$columns['cb'] =  '<input type="checkbox" />';
+
+		foreach ( $this->form_structure as $item ) {
+			$columns[$item['name']] = $item['label']; 
+		}
+
+		$columns['datetime'] = __('Time');
 
 		return $columns;
 	}
@@ -185,8 +185,7 @@ class Saved_Data_List extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		$sortable_columns = array(
-			'eka' => array( 'eka', true ),
-			'field-type' => array( 'field-type', false )
+			'datetime' => array( 'datetime', true ),
 		);
 
 		return $sortable_columns;
@@ -203,6 +202,19 @@ class Saved_Data_List extends WP_List_Table {
 		];
 
 		return $actions;
+	}
+
+	/**
+	 * Returns an associative array containing the form structure.
+	 *
+	 * @return array
+	 */
+	public function get_form_structure() {
+		if(isset($_GET['form-id'])) {
+			$form_id = intval($_GET['form-id']);
+			$form_structure = get_post_meta($form_id, '_forms2db_form_structure', true );
+			return $form_structure;
+		}
 	}
 
 
@@ -361,12 +373,14 @@ class Forms2db_Saved_Data_Page {
         if(count($this->available_forms) == 0) {
             _e("No forms created", "forms2db");
             return;
-        } elseif ( count($this->available_forms) == 1 ) {
+        } elseif ( isset($this->form_id) && count($this->available_forms) == 1 ) {
             $this->form_id =  $this->available_forms[0]->ID;
             return;
-        } elseif ( isset($_GET['form-id']) && is_numeric($_GET['form-id']) ) {
+        } elseif ( isset($this->form_id) && isset($_GET['form-id']) && is_numeric($_GET['form-id']) ) {
             $this->form_id = $_GET['form-id'];
-        }
+        } else {
+			$this->form_id = null;
+		}
 
         require('views/partials/form-selector.php');    
 	}
@@ -382,6 +396,10 @@ class Forms2db_Saved_Data_Page {
         );
         
         return get_posts($args);
+
+	}
+
+	public function csv_export() {
 
     }
 

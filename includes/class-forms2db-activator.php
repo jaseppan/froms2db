@@ -43,6 +43,7 @@ class Forms2db_Activator {
 					status VARCHAR (256),
 					form_key VARCHAR (256),
 					form_data VARCHAR (16000),
+					datetime TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
 					PRIMARY KEY (id) );";
 
 		

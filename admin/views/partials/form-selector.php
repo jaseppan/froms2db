@@ -5,7 +5,7 @@
     <select name="form-id" id="forms2db-selector">
         <option>-- <?php _e('Select form', 'forms2db') ?> --</option>
         <?php foreach($this->available_forms as $form) { ?>
-        <option value="<?php echo $form->ID ?>" <?php echo ($this->form_id == $form->ID) ? 'selected' : ''  ?>><?php echo $form->post_title ?></option>     
+        <option value="<?php echo $form->ID ?>" <?php echo ($_GET['form-id'] == $form->ID) ? 'selected' : ''  ?>><?php echo $form->post_title ?></option>     
         <?php } ?>
     </select>
     <input type="submit" name="submit-forms2db-selector" value="<?php _e('Submit', 'forms2db') ?>" id="submit-forms2db-selector" class="button">
