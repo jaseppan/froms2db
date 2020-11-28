@@ -134,7 +134,9 @@ class Forms2db_Public {
 				return;
 			}
 
-			
+			// TESTAUS
+			$this->send_messages($form_id, $form_data_array);
+
 			$form_data = json_encode($form_data_array);
 			
 			global $wpdb;
@@ -179,7 +181,26 @@ class Forms2db_Public {
 			if( $result == true ) {
 				global $forms2db_record_id;
 				$forms2db_record_id = $wpdb->insert_id;
+				$this->send_messages($form_id, $form_data_array);
 			}			
+		}
+	}
+
+	public function send_messages( $form_id, $form_data_array ) {
+		$emails['admin'] = get_post_meta( $form_id, '_forms2db_admin_emails',  true );
+		$emails['user'] = isset($form_data_array['email']) ? $form_data_array['email'] : null;
+		$subjects['admin'] = (get_post_meta( $form_id, '_forms2db_admin_email_subject',  true)) ? get_post_meta( $form_id, '_forms2db_admin_email_subject',  true ) : __('Message from ') . home_url();
+		$subjects['user'] = (get_post_meta( $form_id, '_forms2db_user_email_subject',  true )) ? get_post_meta( $form_id, '_forms2db_user_email_subject',  true ) : __('Message from ') . home_url();
+		$templates['admin'] = get_post_meta( $form_id, '_forms2db_admin_message',  true );
+		$templates['user'] = get_post_meta( $form_id, '_forms2db_user_message',  true );
+		
+		foreach( $templates as $message_key => $message ) {
+			if(isset($emails[$message_key]) && !empty($message)) {
+				foreach($form_data_array as $key => $value) {
+					$message = str_replace( "[$key]", $value, $message );
+				}
+				wp_mail( $emails[$message_key], $subjects[$message_key], $message );
+			}
 		}
 	}
 

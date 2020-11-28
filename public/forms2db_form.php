@@ -41,7 +41,8 @@ class Forms2dbForm {
 		global $forms2db_errors;
 
 		if( isset($_POST['forms2db-form-user-action']) && empty($forms2db_errors) ) {
-			require 'views/forms2db-thank-you.php';
+			echo "test";
+			//require 'views/forms2db-thank-you.php';
 		} else {
 			require 'views/forms2db-form.php';
 		}

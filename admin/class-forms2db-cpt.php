@@ -327,7 +327,7 @@ class Forms2db_Cpt {
              */
 
             if(isset( $_POST['_forms2db_admin_message'] )) {
-                $forms2db_admin_message = sanitize_text_field($_POST['_forms2db_admin_message']);
+                $forms2db_admin_message = sanitize_post( $_POST['_forms2db_admin_message']);
                 update_post_meta( $post_id, '_forms2db_admin_message',  $forms2db_admin_message );
             }
 
@@ -346,7 +346,7 @@ class Forms2db_Cpt {
              */
 
             if(isset( $_POST["_forms2db_user_message"] )) {
-                $forms2db_user_message = sanitize_text_field($_POST["_forms2db_user_message"]);
+                $forms2db_user_message = sanitize_post($_POST["_forms2db_user_message"]);
                 update_post_meta( $post_id, '_forms2db_user_message',  $forms2db_user_message );
             }
 
