@@ -62,6 +62,27 @@
     top: 12px;
 }
 
+.forms2db-field-name-list {
+    margin: 15px 0;
+}
+
+.add-field-shortcode {
+    cursor: pointer;
+}
+
+.added-field-shortcode {
+    color: #b3b3b3;
+}
+
+
+textarea.e-sale-admin-textarea {
+    width: 100%;
+    -webkit-box-sizing: border-box; /* <=iOS4, <= Android  2.3 */
+       -moz-box-sizing: border-box; /* FF1+ */
+            box-sizing: border-box; /* Chrome, IE8, Opera, Safari 5.1*/
+    height: 200px;
+}
+
 .col-2 {
     width: 16.67%;
 }

@@ -389,9 +389,12 @@ class Forms2db_Cpt {
 
         echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-admin-emails' value='%s'><br />", __('Receiver emails', 'forms2db'), $receivers );
         echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-admin-email-subject' value='%s'><br />", __('Message subject', 'forms2db'), $subject );
-        wp_editor( htmlspecialchars_decode($content), '_forms2db_admin_message', array("media_buttons" => false) );?>
+        //wp_editor( htmlspecialchars_decode($content), '_forms2db_admin_message', array( "media_buttons" => false  ) ); 
+        ?>
+        <label>Message</label>
+        <textarea name="_forms2db_admin_message" id="_forms2db_admin_message" class="e-sale-admin-textarea"><?php echo htmlspecialchars_decode($content) ?></textarea>
         <div class="row">
-            <span class="forms2db-field-name-list"></span>
+            <div class="forms2db-field-name-list"></div>
         </div>
         <div class="row">
             <?php echo sprintf("<button id='forms2db-generate-admin-message' class='button'>%s</button>", __('Generate admin message') ); ?>

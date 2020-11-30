@@ -62,31 +62,57 @@ jQuery( document ).ready(function($) {
 	 function formFieldList() {
 		$('.forms2db-field-name-list')
 			.html( $('.field-name-field').map(function() {
-				return '<span class="add-field-shortcode">' + $( this ).val() + '</span>';
+				return formFieldShorcode( $( this ).val(), $( '#_forms2db_admin_message' ).text() );
 			})
 			.get()
 			.join( " " ) );
 	 }
 
+	 function formFieldShorcode(text, textarea) {
+
+		var shortcode = '[' + text + ']';
+		if( textarea.indexOf( shortcode ) > -1 ) {
+			var shortcodeClass = "added-field-shortcode";
+		} else {
+			var shortcodeClass = "add-field-shortcode";
+		}
+		var shortcodeButton = '<span class="' + shortcodeClass + '">' + shortcode + '</span>';
+		return shortcodeButton;
+	 }
+
 	 $('.add-field-shortcode').click(function() {
-		var shortcode = '[' + $( this ).html() + ']';
-		addTinyText('_forms2db_admin_message', shortcode);
+		var shortcode = $( this ).html();
+		includeShortcode('_forms2db_admin_message', shortcode);
+		$( this ).addClass('added-field-shortcode').removeClass('added-field-shortcode');
 	 });
 
-	 function addTinyText(id, text){
-		// ADD TEXT TO TINYMCE FIELD!?!?!?
+	function includeShortcode(id, text) {
+		var originalContent = $( '#' + id).val();
+		var cursorPosition = forms2fbCursorPosition(id);
+		if( cursorPosition == false ) {
+			var updatedText = originalContent + text;
+		} else {
+			var textStart = originalContent.substr( 0, cursorPosition );
+			var textEnd = originalContent.substr( cursorPosition );	
+			var updatedText = textStart + text + textEnd;
+		}
+		$('#' + id).val(updatedText);
 	}
 
-	 /*$('.forms2db-field-name-list').html(formFieldList());
-
-	 function formFieldList() {
-		 var fields = $('.field-name-field').();
-		 console.log(fields);
-		 return "test";
-	 }*/
+	
 
 });
 
+function forms2fbCursorPosition(id) {
+	var content = document.getElementById(id);
+	if((content.selectionStart != null) && (content.selectionStart != undefined) && (content.selectionStart > 0)){
+		var position = content.selectionStart;
+		return position;
+	}
+	else {
+		return false;
+	}
+}
 
 function inArray(needle, haystack) {
     var length = haystack.length;
