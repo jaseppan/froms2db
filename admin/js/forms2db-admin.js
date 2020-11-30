@@ -57,7 +57,36 @@ jQuery( document ).ready(function($) {
 		  
 	 });
 
+	 formFieldList();
+
+	 function formFieldList() {
+		$('.forms2db-field-name-list')
+			.html( $('.field-name-field').map(function() {
+				return '<span class="add-field-shortcode">' + $( this ).val() + '</span>';
+			})
+			.get()
+			.join( " " ) );
+	 }
+
+	 $('.add-field-shortcode').click(function() {
+		var shortcode = '[' + $( this ).html() + ']';
+		addTinyText('_forms2db_admin_message', shortcode);
+	 });
+
+	 function addTinyText(id, text){
+		// ADD TEXT TO TINYMCE FIELD!?!?!?
+	}
+
+	 /*$('.forms2db-field-name-list').html(formFieldList());
+
+	 function formFieldList() {
+		 var fields = $('.field-name-field').();
+		 console.log(fields);
+		 return "test";
+	 }*/
+
 });
+
 
 function inArray(needle, haystack) {
     var length = haystack.length;

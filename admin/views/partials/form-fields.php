@@ -32,7 +32,7 @@
                 <div class="forms2db-fields-col col-4">
                     <div class="inner-col">
                         <label for="name" class="block"><?php _e('Name') ?></label>
-                        <input type="text" name="name[]" value="<?php echo (isset($field['name'])) ? $field['name'] : '' ?>">
+                        <input type="text" name="name[]" value="<?php echo (isset($field['name'])) ? $field['name'] : '' ?>" class="field-name-field">
                     </div>
                 </div>
                 <div class="forms2db-fields-col col-4">
@@ -75,7 +75,7 @@
                     <div class="inner-col">
                         <div class="options <?php echo (!in_array( $field['field-type'], $checkboxes)) ? 'hidden' : '' ?>">
                             <label for="type" class="block"><?php _e('Options') ?></label>
-                            <textarea name="options[]" id="" cols="30" rows="4"><?php echo (isset($field['options'])) ? $this->option_array_to_text($field['options']) : '' ?></textarea>
+                            <textarea name="options[]" cols="30" rows="4"><?php echo (isset($field['options'])) ? $this->option_array_to_text($field['options']) : '' ?></textarea>
                         </div>
                     </div>
                 </div>
