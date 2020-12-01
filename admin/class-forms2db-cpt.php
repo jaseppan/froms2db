@@ -394,7 +394,7 @@ class Forms2db_Cpt {
         <label>Message</label>
         <textarea name="_forms2db_admin_message" id="_forms2db_admin_message" class="e-sale-admin-textarea"><?php echo htmlspecialchars_decode($content) ?></textarea>
         <div class="row">
-            <div class="forms2db-field-name-list"></div>
+            <div id="forms2db-field-name-list-admin" class="forms2db-field-name-list"></div>
         </div>
         <div class="row">
             <?php echo sprintf("<button id='forms2db-generate-admin-message' class='button'>%s</button>", __('Generate admin message') ); ?>
@@ -415,8 +415,16 @@ class Forms2db_Cpt {
         $user_email_field = get_post_meta($post->ID, '_forms2db_user_email_address_field',  true );
         echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-user-email-subject' value='%s'><br />", __('Message subject', 'forms2db'), $subject );
         echo sprintf("<label>%s</label><br /><input type='text' name='forms2db-user-email-address-field' value='%s'><br />", __('Get email from field', 'forms2db'), $user_email_field );
-        wp_editor( htmlspecialchars_decode($content), '_forms2db_user_message', array("media_buttons" => false) );
-    }
+        //wp_editor( htmlspecialchars_decode($content), '_forms2db_user_message', array("media_buttons" => false) ); ?>
+        <label>Message</label>
+        <textarea name="_forms2db_user_message" id="_forms2db_user_message" class="e-sale-admin-textarea"><?php echo htmlspecialchars_decode($content) ?></textarea>
+        <div class="row">
+            <div id="forms2db-field-name-list-user" class="forms2db-field-name-list"></div>
+        </div>
+        <div class="row">
+            <?php echo sprintf("<button id='forms2db-generate-user-message' class='button'>%s</button>", __('Generate admin message') ); ?>
+        </div>
+    <?php }
 
     /**
      * Metabox for settings

@@ -10,7 +10,6 @@ jQuery( document ).ready(function($) {
 	});
 
 	$(document).on('focus', '.forms2db-fields-row input, .forms2db-fields-row select, .forms2db-fields-row textarea', function() {
-		console.log($(this).parent().parent().parent().prev().find('.forms2db-field-toggle'));
 		
 		$(this).parent().parent().parent().prev().find('.forms2db-field-toggle span').addClass('active');
 		$(this).closest('.forms2db-field-container').addClass('active');
@@ -71,37 +70,63 @@ jQuery( document ).ready(function($) {
 	 function formFieldShorcode(text, textarea) {
 
 		var shortcode = '[' + text + ']';
-		if( textarea.indexOf( shortcode ) > -1 ) {
-			var shortcodeClass = "added-field-shortcode";
-		} else {
-			var shortcodeClass = "add-field-shortcode";
-		}
+		var shortcodeClass = "add-field-shortcode";
 		var shortcodeButton = '<span class="' + shortcodeClass + '">' + shortcode + '</span>';
 		return shortcodeButton;
 	 }
 
 	 $('.add-field-shortcode').click(function() {
 		var shortcode = $( this ).html();
-		includeShortcode('_forms2db_admin_message', shortcode);
-		$( this ).addClass('added-field-shortcode').removeClass('added-field-shortcode');
+		var parent_id = $( this ).closest('div').attr('id');
+		if( parent_id == 'forms2db-field-name-list-admin' ) {
+			textarea_id = '_forms2db_admin_message';
+		}
+		if( parent_id == 'forms2db-field-name-list-user' ) {
+			textarea_id = '_forms2db_user_message';
+		}
+		
+		includeShortcode(textarea_id, shortcode);
 	 });
 
 	function includeShortcode(id, text) {
 		var originalContent = $( '#' + id).val();
 		var cursorPosition = forms2fbCursorPosition(id);
+		
+		
 		if( cursorPosition == false ) {
 			var updatedText = originalContent + text;
+			var newCursorPosition = originalContent.length + text.length;
 		} else {
 			var textStart = originalContent.substr( 0, cursorPosition );
 			var textEnd = originalContent.substr( cursorPosition );	
 			var updatedText = textStart + text + textEnd;
+			var newCursorPosition = cursorPosition + text.length;
 		}
+		console.log(newCursorPosition);
 		$('#' + id).val(updatedText);
+		setCaretToPos(document.getElementById(id), newCursorPosition);
 	}
-
-	
+		
 
 });
+
+function setSelectionRange(input, selectionStart, selectionEnd) {
+	if (input.setSelectionRange) {
+	  input.focus();
+	  input.setSelectionRange(selectionStart, selectionEnd);
+	}
+	else if (input.createTextRange) {
+	  var range = input.createTextRange();
+	  range.collapse(true);
+	  range.moveEnd('character', selectionEnd);
+	  range.moveStart('character', selectionStart);
+	  range.select();
+	}
+  }
+  
+  function setCaretToPos (input, pos) {
+	setSelectionRange(input, pos, pos);
+  }
 
 function forms2fbCursorPosition(id) {
 	var content = document.getElementById(id);
