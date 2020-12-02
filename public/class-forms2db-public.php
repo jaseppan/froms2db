@@ -93,7 +93,8 @@ class Forms2db_Public {
 			if(is_numeric($_POST['forms2db-form-id'])) {
 				$form_id = $_POST['forms2db-form-id'];
 				$form_fields = get_post_meta($form_id, '_forms2db_form', true);
-				$form_settings = get_post_meta($form_id, '_forms2db_settings', true); // ADD HERE "MODIFYABLE" "CONFIRM_REQUIRED"
+				$form_settings = get_post_meta($form_id, '_forms2db_settings', true);
+				$this->form_settings = $form_settings;
 			} else {
 				$forms2db_errors->add( 'form2db-errors', __('Invalid form id'), 'invalid_form_id' );
 			}
@@ -135,59 +136,84 @@ class Forms2db_Public {
 				return;
 			}
 
-			// TESTAUS
-			$this->send_messages($form_id, $form_data_array);
+            /**
+			 * form-information-delivery values:
+			 * 1. Both send email and save to database
+			 * 2. Send email only
+			 * 3. Save to database
+			 */
 
-			$form_data = json_encode($form_data_array);
-			
-			global $wpdb;
-
-			// ADD USER IF THE FORM IS MODIFYABLE AND USER IS LOGGED IN OR IF FORM_ID EXIST
- 			if( is_user_logged_in() ) {
-				$user_id = get_current_user_id();
-				$ids = array(
-					$form_id,
-					$post_id,
-					$user_id,
-				);
-				$sql = "SELECT id FROM {$wpdb->prefix}forms2db_data WHERE form_id = %d && post_id = %d && user_id = %d";
-				$results = $wpdb->get_results($wpdb->prepare($sql, $ids));
-				$user_data_id = $results[0]->id;
-			} else {
-				$user_id = NULL;
-			}
-
-			if(isset($user_data_id)) {
-				$data = array(
-					'form_data' 	=> $form_data,
-					'id'			=> $user_data_id
-				);
+			// Save data to email
+			if( $form_settings['form-information-delivery'] != 2 ) {
+				$form_data = json_encode($form_data_array);
 				
-				$sql = "UPDATE {$wpdb->prefix}forms2db_data SET form_data = %s WHERE id = %d";
-			
+				global $wpdb;
+
+				// ADD USER IF THE FORM IS MODIFYABLE AND USER IS LOGGED IN OR IF FORM_ID EXIST
+				if( is_user_logged_in() ) {
+					$user_id = get_current_user_id();
+					$ids = array(
+						$form_id,
+						$post_id,
+						$user_id,
+					);
+					$sql = "SELECT id FROM {$wpdb->prefix}forms2db_data WHERE form_id = %d && post_id = %d && user_id = %d";
+					$results = $wpdb->get_results($wpdb->prepare($sql, $ids));
+					$user_data_id = $results[0]->id;
+				} else {
+					$user_id = NULL;
+				}
+
+				if(isset($user_data_id)) {
+					$data = array(
+						'form_data' 	=> $form_data,
+						'id'			=> $user_data_id
+					);
+					
+					$sql = "UPDATE {$wpdb->prefix}forms2db_data SET form_data = %s WHERE id = %d";
+				
+				} else {
+					if($form_settings['confirmation-required'] == true) {
+						$this->form_key_form_email = wp_generate_password( 32, false );
+						$form_key = md5( $this->form_key_form_email );
+						$status = 0;
+					} else {
+						$form_key = '';
+						$status = 1;
+					}
+
+					$data = array(
+						'post_id' 	=>  $post_id,
+						'form_id' 	=>  $form_id,
+						'user_id' 	=>  $user_id,
+						'form_key' 	=>  $form_key,
+						'status' 	=>  $status,
+						'form_data' =>  $form_data,
+					);
+
+					$sql = "INSERT INTO {$wpdb->prefix}forms2db_data (post_id, form_id, user_id, form_key, status, form_data) VALUES (%d, %d, %d, %d, %s, %s)";
+
+				}
+
+				$result = $wpdb->query($wpdb->prepare($sql, $data));
+
+				if( $result == true ) {
+					global $forms2db_record_id;
+					$forms2db_record_id = $wpdb->insert_id;
+					$this->send_messages($form_id, $form_data_array);
+				} else {
+					$this->send_messages($form_id, $form_data_array, true);
+				}	
 			} else {
-				$data = array(
-					'post_id' 	=>  $post_id,
-					'form_id' 	=>  $form_id,
-					'user_id' 	=>  $user_id,
-					'form_data' =>  $form_data,
-				);
-
-				$sql = "INSERT INTO {$wpdb->prefix}forms2db_data (post_id, form_id, user_id, form_data) VALUES (%d, %d, %d, %s)";
-
-			}
-
-			$result = $wpdb->query($wpdb->prepare($sql, $data));
-
-			if( $result == true ) {
-				global $forms2db_record_id;
-				$forms2db_record_id = $wpdb->insert_id;
 				$this->send_messages($form_id, $form_data_array);
-			}			
+			}
 		}
 	}
 
-	public function send_messages( $form_id, $form_data_array ) {
+	public function send_messages( $form_id, $form_data_array, $db_error = false ) {
+
+		global $forms2db_record_id;
+
 		$emails['admin'] = get_post_meta( $form_id, '_forms2db_admin_emails',  true );
 		$emails['user'] = isset($form_data_array['email']) ? $form_data_array['email'] : null;
 		$subjects['admin'] = (get_post_meta( $form_id, '_forms2db_admin_email_subject',  true)) ? get_post_meta( $form_id, '_forms2db_admin_email_subject',  true ) : __('Message from ') . home_url();
@@ -199,6 +225,37 @@ class Forms2db_Public {
 			if(isset($emails[$message_key]) && !empty($message)) {
 				foreach($form_data_array as $key => $value) {
 					$message = str_replace( "[$key]", $value, $message );
+				}
+				if( $db_error == true && $message_key == 'admin' ) {
+					$message .=  PHP_EOL . PHP_EOL . __("Error: Failed to save data to database.");
+				}
+				if( isset($this->form_key_form_email) && $message_key == 'user' ) {
+					
+					$link_url = add_query_arg( array(
+							'action' => 'confirm',
+							'form-id' => $forms2db_record_id, 
+							'key' => $this->form_key_form_email,
+						),
+						get_permalink( intval($_POST['forms2db-post-id']) )
+				  	);
+
+					$message .= PHP_EOL . PHP_EOL . ($this->form_settings['confirmation-instruction']) ? $this->form_settings['confirmation-instruction'] : __('Confirm the form submission');
+					$message .= PHP_EOL . $link_url;
+					
+				}
+				if( isset($this->form_key_form_email) && $this->form_settings['modifyable'] && $message_key == 'user' ) {
+					
+					$link_url = add_query_arg( array(
+							'action' => 'edit',
+							'form-id' => $forms2db_record_id, 
+							'key' => $this->form_key_form_email,
+						), 
+						get_permalink( intval($_POST['forms2db-post-id']) )
+				  	);
+					
+					$message .= PHP_EOL . PHP_EOL . ($this->form_settings['edit-instruction']) ? $this->form_settings['edit-instruction'] : __('Edit the submission using the link below'); 
+					$message .= PHP_EOL . $link_url;
+					
 				}
 				wp_mail( $emails[$message_key], $subjects[$message_key], $message );
 			}

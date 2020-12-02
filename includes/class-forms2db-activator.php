@@ -40,7 +40,7 @@ class Forms2db_Activator {
 					post_id INT NOT NULL,
 					form_id INT NOT NULL,
 					user_id INT,
-					status VARCHAR (256),
+					status INT,
 					form_key VARCHAR (256),
 					form_data VARCHAR (16000),
 					datetime TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
