@@ -321,6 +321,9 @@ class Forms2db_Cpt {
              * Save settings
              */
 
+            if(isset( $_POST['form-information-delivery'] ))
+                $settings['form-information-delivery'] = intval($_POST['form-information-delivery']);
+            
             if(isset( $_POST['modifyable'] ))
                 $settings['modifyable'] = (boolean) $_POST['modifyable'];
             
@@ -347,7 +350,6 @@ class Forms2db_Cpt {
                 }
             }
 
-            // ADD: _forms2db_admin_email_subject
             if(isset( $_POST["forms2db-admin-email-subject"] )) {
                 $forms2db_admin_email_subject = sanitize_text_field($_POST["forms2db-admin-email-subject"]);
                 update_post_meta( $post_id, '_forms2db_admin_email_subject',  $forms2db_admin_email_subject );
@@ -440,13 +442,12 @@ class Forms2db_Cpt {
         } else {
             // default settings
             $settings = array(
+                'form-information-delivery' => 3, 
                 'modifyable' => false, 
                 'confirmation-required' => false, 
             );
         }
 
-        
-        
         require('views/form-settings.php');
 
     }
