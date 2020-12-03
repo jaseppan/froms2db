@@ -56,16 +56,22 @@ function forms2db_validate($value, $type, $attributes, $label, $name, $options )
 
     $label = isset($label) ? $label : __('Field');
 
-    if(strpos($attributes, "require")) {
+    if(is_numeric(strpos($attributes, "required"))) {
         $is_required = true;
     } else {
         $is_required = false;
     }
 
-    if( $is_required && is_empty($value) ) {
+    if( $is_required && empty($value) ) {
         $message = sprintf(__('%s is required'), $label);
-        $forms2db_errors->add( 'form2db-field-errors', $message, $name );
+        $forms2db_errors->add( $name, $message );
+        // $forms2db_errors->add( 'form2db-field-errors', $message, $name );
     } else {
+        
+        // Stop validating if empty and not required
+        if(empty($value))
+            return;
+
         $texts = array(
             'input',
             'textarea'

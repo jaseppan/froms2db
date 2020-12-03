@@ -55,12 +55,6 @@
                 </div>
                 <div class="forms2db-fields-col col-4">
                     <div class="inner-col">
-                        <label for="type" class="block"><?php _e('Required') ?></label>
-                        <input type="checkbox" name="required[]" value="<?php echo (isset($field['required'])) ? $field['required'] : '' ?>">
-                    </div>
-                </div>
-                <div class="forms2db-fields-col col-4">
-                    <div class="inner-col">
                         <label for="type" class="block"><?php _e('Field Classes') ?></label>
                         <input type="text" name="field-classes[]" value="<?php echo (isset($field['field-classes'])) ? $field['field-classes'] : '' ?>">
                     </div>

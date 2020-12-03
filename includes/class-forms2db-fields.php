@@ -57,6 +57,7 @@ class Forms2DbFields {
         // Add label
 
         $field = isset( $args['label'] ) ? sprintf( '<label for="%s" class="froms2db-main-label">%s</label>', $args['id'], $args['label'] ) : '';
+        $field_classes = trim('forms2db-' . $args['field-type'] . ' ' . esc_attr($args['field-classes']));
         switch ($args['field-type']) {
             case "select" :
                 if(!isset($args['options']))
@@ -64,7 +65,7 @@ class Forms2DbFields {
                 $field .= sprintf('<select name="%s" id="%s" class="%s" %s>', 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['field-classes']), 
+                    $field_classes, 
                     esc_attr($args['attributes'])
                 );
                 $field .= implode(' ', array_map(array($this, "add_select_option"), 
@@ -75,12 +76,13 @@ class Forms2DbFields {
                 $field .= '</select>';
                 break;
             case in_array( $args['field-type'], $inputs ) :
-                $field .= sprintf('<input type="%s" name="%s" id="%s" class="%s" value="%s">', 
+                $field .= sprintf('<input type="%s" name="%s" id="%s" class="%s" value="%s" %s>', 
                     esc_attr($args['field-type']), 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['field-classes']), 
-                    esc_attr($args['value'])
+                    $field_classes,
+                    esc_attr($args['value']),
+                    esc_attr($args['attributes'])
                 );
                 break;    
             case in_array( $args['field-type'], $checkboxes ) :
@@ -93,7 +95,7 @@ class Forms2DbFields {
                 $type = array_fill(0, $options_count, esc_attr( $args['field-type']) );
                 $id = array_fill( 0, $options_count, esc_attr( $args['id'] ) );
                 $id_numbers = array_fill(0, $options_count, esc_attr( $args['id']) );
-                $class = array( 0, $options_count, esc_attr( $args['field-classes']) );
+                $class = array( 0, $options_count, $field_classes);
                 $field = implode(' ', array_map(array($this, "add_checkbox"), 
                     $name, 
                     $options, 
@@ -106,10 +108,11 @@ class Forms2DbFields {
                 );
                 break;
             case "textarea" :
-                $field .= sprintf('<textarea name="%s" id="%s" class="%s">%s</textarea>', 
+                $field .= sprintf('<textarea name="%s" id="%s" class="%s" %s>%s</textarea>', 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['field-classes']), 
+                    $field_classes, 
+                    esc_attr($args['attributes']),
                     esc_attr($args['value'])
                 );
                 break;
@@ -120,7 +123,7 @@ class Forms2DbFields {
                     esc_attr($args['field-type']), 
                     esc_attr($args['name']), 
                     esc_attr($args['id']), 
-                    esc_attr($args['field-classes']), 
+                    $field_classes, 
                     $size,
                     $accept
                 );
