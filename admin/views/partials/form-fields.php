@@ -2,8 +2,8 @@
     <div class="forms2db-field-header">
         <input type="text" name="label[]" value="<?php echo $field['label'] ?>" placeholder="<?php echo _e('label'); ?>">
         <div class="forms2db-field-actions">
-            <span class="forms2db-field-delete"><span class="circle">x</span></span>
-            <span class="forms2db-field-toggle"><span>></span></span>
+            <span class="forms2db-field-delete"><span class="notice-dismiss"></span></span>
+            <span class="forms2db-field-toggle bulk-action-notice"><span class="toggle-indicator"></span></span>
         </div>
     </div>
     <div class="forms2db-fields-row">

@@ -24,9 +24,16 @@
     height: 100%;
 }
 
-.forms2db-field-toggle span.active {
-    transform: rotate(90deg);
+.forms2db-field-toggle span {
+    transform: rotate(180deg);
 }
+
+.forms2db-field-toggle span.active {
+    transform: rotate(0deg);
+}
+
+
+
 
 .forms2db-fields-row {
     display: inline-flex;
@@ -130,24 +137,20 @@ label {
 }
 
 .forms2db-field-actions span {
-    font-size: 1.4rem;
-    margin: 0 0.5rem 0 0;
-    color: gray;
     display: flex;
     justify-content: center;
     flex-direction: column;
     cursor: pointer;
 }
 
-span.circle {
-    border: #707070 2px solid;
-    font-size: 0.7em;
-    border-radius: 1em;
-    height: 0.9em;
-    width: 1em;
-    text-align: center;
-    font-weight: 700;
-    padding-bottom: 0.1em;
+span.forms2db-field-delete span {
+    right: 1rem;
+    top: 0.4rem;
+}
+
+span.forms2db-field-toggle.bulk-action-notice span {
+    right: 0.4rem;
+    position: absolute;
 }
 
 .block {
